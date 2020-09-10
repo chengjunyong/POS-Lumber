@@ -1,5 +1,5 @@
 <?php
-
+use Illuminate\Support\Facades\URL;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -11,6 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/','MainController@getIndex')->name('getIndex');
+
+Route::get('/companylist','MainController@getCompany')->name('getCompany');
+
+Route::get('/addprofile','MainController@getAddProfile')->name('getAddProfile');
+
+Route::post('/postaddprofile','MainController@postAddProfile')->name('postAddProfile');
+
+Route::get('/editprofile{id}','MainController@editProfile')->name('editProfile');
+
+Route::post('/posteditprofile','MainController@postEditProfile')->name('postEditProfile');
+
+
