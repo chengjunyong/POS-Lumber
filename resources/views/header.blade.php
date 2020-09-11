@@ -41,17 +41,33 @@
                     <a href="{{ route('getAddProfile') }}">Add Company Profile</a>
                 </li>
               </ul>
+            </li>
+
+            <li class="sidebar-item {{ $current == 'item' ? 'active' : '' }} has-sub" >
+              <a href="#" class='sidebar-link'>
+                <i data-feather="server" width="20"></i> 
+                <span>Items</span>
+              </a>
+              <ul class="submenu {{ $current == 'item' ? 'active' : '' }}">
+                <li>
+                    <a href="{{ route('getProduct') }}">Product</a>
+                </li>
+                <li>
+                    <a href="{{ route('getVariation') }}">Variation</a>
+                </li>
+              </ul>
             </li>   
- 
+
+          </ul>
         </div>
         <button class="sidebar-toggler btn x"><i data-feather="x"></i></button>
       </div>
     </div>
     <div id="main">
-  <!-- <nav class="navbar navbar-header navbar-expand navbar-light">
+  <nav class="navbar navbar-header navbar-expand navbar-light">
     <a class="sidebar-toggler" href="#"><span class="navbar-toggler-icon"></span></a>
     <button class="btn navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-  </nav> -->
+  </nav>
   <div class="main-content container-fluid">
