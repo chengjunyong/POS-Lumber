@@ -56,7 +56,22 @@
                     <a href="{{ route('getVariation') }}">Variation</a>
                 </li>
               </ul>
-            </li>   
+            </li>
+
+            <li class="sidebar-item {{ $current == 'invoice' ? 'active' : '' }} has-sub" >
+              <a href="#" class='sidebar-link'>
+                <i data-feather="file-text" width="20"></i> 
+                <span>Invoice</span>
+              </a>
+              <ul class="submenu {{ $current == 'invoice' ? 'active' : '' }}">
+                <li>
+                    <a href="{{ route('getInvoice') }}">Generate Invoice</a>
+                </li>
+                <li>
+                    <a href="#">History</a>
+                </li>
+              </ul>
+            </li>    
 
           </ul>
         </div>

@@ -25,7 +25,7 @@
 						<span style="font-size: 18px">Product Name</span><hr/>
 						<div class="list">
 						@foreach($product as $result)
-							<div style="margin:25px 0px 25px 0px"><label class="text">{{ $result['name'] }}</label><button class="btn btn-danger delete" variation_id="{{ $result['id'] }}">Delete</button><hr/></div>
+							<div style="margin:25px 0px 25px 0px"><label class="text">{{ $result['name'] }}</label><button class="btn btn-danger delete" product_id="{{ $result['id'] }}">Delete</button><hr/></div>
 						@endforeach
 						</div>
 					</div>

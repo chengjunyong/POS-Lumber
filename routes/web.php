@@ -35,4 +35,8 @@ Route::post('/addvariation','MainController@ajaxAddVariation')->name('ajaxAddVar
 
 Route::post('/ajaxdeletevariation','MainController@ajaxDeleteVariation')->name('ajaxDeleteVariation');
 
+Route::get('/invoice','MainController@getInvoice')->name('getInvoice');
+
+Route::post('/ajaxgetValue','MainController@ajaxgetValue')->name('ajaxgetValue');
+
 

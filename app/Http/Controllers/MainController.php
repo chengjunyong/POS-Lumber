@@ -153,6 +153,10 @@ class MainController extends Controller
           $response->second = $result['second'];
         }
 
+        $text = $response->first.'" x '.$response->second.'"';
+
+        variation::where('id',$result['id'])->update(['display' => $text]);
+
         return json_encode($response);
       }
 
@@ -164,5 +168,20 @@ class MainController extends Controller
       $result = variation::where('id',$request['id'])->delete();
       
       return $result;
+    }
+
+    public function getInvoice(){
+      $current = "invoice"; 
+      $company = company::get();
+      $product = product::get();
+      $variation = variation::get();
+
+      return view('generate_invoice',compact('product','variation','current','company'));
+    }
+
+    public function ajaxgetValue(Request $request){
+      $variation = variation::where('id',$request['id'])->first();
+
+      return json_encode($variation);
     }
 }
