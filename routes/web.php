@@ -39,4 +39,8 @@ Route::get('/invoice','MainController@getInvoice')->name('getInvoice');
 
 Route::post('/ajaxgetValue','MainController@ajaxgetValue')->name('ajaxgetValue');
 
+Route::post('/postinvoice','MainController@postInvoice')->name('postInvoice');
 
+Route::get('/history','MainController@getHistory')->name('getHistory');
+
+Route::get('/edithistory{id}','MainController@editHistory')->name('editHistory');

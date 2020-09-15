@@ -7,6 +7,8 @@ use Phospr\Fraction;
 use App\company;
 use App\product;
 use App\variation;
+use App\invoice;
+use App\invoice_detail;
 class MainController extends Controller
 {
     public function getIndex(){
@@ -184,4 +186,84 @@ class MainController extends Controller
 
       return json_encode($variation);
     }
+
+    public function postInvoice(Request $request){
+
+      
+      $count = count($request['product_id']);
+      $total_amount = 0;
+      $total_tonnage = 0;
+      $total_piece = 0;
+
+      for($a=0;$a<$count;$a++){
+        $total_piece += floatval($request['total_piece'][$a]); 
+        $total_tonnage += floatval($request['tonnage'][$a]);
+
+        $tmp = $request['amount'][$a];
+        $tmp = str_replace("Rm ","",$tmp);
+        $tmp = str_replace(",","",$tmp);
+
+        $total_amount += floatval($tmp); 
+      }
+
+      $invoice = invoice::create([
+        'company_id' => $request['company_id'],
+        'pieces' => $total_piece,
+        'tonnage' => $total_tonnage,
+        'amount' => $total_amount
+      ]);
+
+      for($a=0;$a<$count;$a++){
+
+        $amount = $request['amount'][$a];
+        $amount = str_replace("Rm ","",$amount);
+        $amount = str_replace(",","",$amount);
+
+        invoice_detail::create([
+          'invoice_id' => $invoice['id'],
+          'product_id' => $request['product_id'][$a],
+          'variation_id' => $request['variation'][$a],
+          'piece_col' => $request['piece'][$a],
+          'total_piece' => $request['total_piece'][$a],
+          'price' => $request['price'][$a],
+          'amount' => $amount,
+          'tonnage' => $request['tonnage'][$a],
+          'footrun' => $request['tonnage'][$a] * 7200,
+        ]);
+      }  
+    
+
+      return back()->withInput();
+
+    }
+
+    public function getHistory(){
+
+      $current = "invoice";
+      $invoice = invoice::join("company","invoice.company_id","=","company.id")
+                          ->select("invoice.*","company.company_name")
+                          ->get();
+
+      return view('history',compact('current','invoice'));
+    }
+
+    public function editHistory(Request $request){
+      $current = "invoice";
+      $invoice_id = $request['id'];
+
+      $invoice = invoice::join('company','invoice.company_id','=','company.id')
+                          ->where('invoice.id',$invoice_id)
+                          ->select('invoice.*','company.company_name')
+                          ->first();
+
+      $detail = invoice_detail::join('variation','invoice_detail.variation_id','=','variation.id')
+                                ->join('product','invoice_detail.product_id','=','product.id')
+                                ->where('invoice_detail.invoice_id',$invoice_id)
+                                ->select('invoice_detail.*','variation.display as display','product.name as product_name')
+                                ->get();
+
+      return view('edithistory',compact('current','detail','invoice'));
+
+    }
 }
+
