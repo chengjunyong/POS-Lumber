@@ -178,7 +178,23 @@ class MainController extends Controller
       $product = product::get();
       $variation = variation::get();
 
-      return view('generate_invoice',compact('product','variation','current','company'));
+      $result = invoice::latest()->first();
+      $year = date("Y");
+
+      if($result == null){
+        $invoice_number = $year."/0001";
+
+      }else if($result['year'] == $year){
+        $index = intval($result['index']) + 1;
+        $index = sprintf("%'.04d", $index);
+        $invoice_number = $year."/".$index;
+
+      }else{
+        $invoice_number = $year."/0001";
+      }
+
+
+      return view('generate_invoice',compact('product','variation','current','company','invoice_number'));
     }
 
     public function ajaxgetValue(Request $request){
@@ -188,25 +204,41 @@ class MainController extends Controller
     }
 
     public function postInvoice(Request $request){
-
       
       $count = count($request['product_id']);
+      $total_cost = 0;
       $total_amount = 0;
       $total_tonnage = 0;
       $total_piece = 0;
 
       for($a=0;$a<$count;$a++){
-        $total_piece += floatval($request['total_piece'][$a]); 
-        $total_tonnage += floatval($request['tonnage'][$a]);
+        if($request['product_id'][$a] != "transport"){
+          $total_piece += floatval($request['total_piece'][$a]); 
+          $total_tonnage += floatval($request['tonnage'][$a]);
 
-        $tmp = $request['amount'][$a];
-        $tmp = str_replace("Rm ","",$tmp);
-        $tmp = str_replace(",","",$tmp);
+          $tmp = $request['amount'][$a];
+          $tmp = str_replace("Rm ","",$tmp);
+          $tmp = str_replace(",","",$tmp);
 
-        $total_amount += floatval($tmp); 
+          $total_amount += floatval($tmp); 
+
+        }else{
+
+          $total_amount += floatval($request['price'][$a]);
+
+        }
       }
 
+      $result = explode("/",$request['invoice_number']);
+      $index = intval($result[1]);
+      $year = $result[0];
+
       $invoice = invoice::create([
+        'invoice_code' => $request['invoice_number'],
+        'do_number' => $request['do'],
+        'invoice_date' => $request['date'],
+        'year' => $year,
+        'index' => $index,
         'company_id' => $request['company_id'],
         'pieces' => $total_piece,
         'tonnage' => $total_tonnage,
@@ -215,26 +247,43 @@ class MainController extends Controller
 
       for($a=0;$a<$count;$a++){
 
-        $amount = $request['amount'][$a];
-        $amount = str_replace("Rm ","",$amount);
-        $amount = str_replace(",","",$amount);
+        if($request['product_id'][$a] != "transport"){
+          $amount = $request['amount'][$a];
+          $amount = str_replace("Rm ","",$amount);
+          $amount = str_replace(",","",$amount);
 
-        invoice_detail::create([
-          'invoice_id' => $invoice['id'],
-          'product_id' => $request['product_id'][$a],
-          'variation_id' => $request['variation'][$a],
-          'piece_col' => $request['piece'][$a],
-          'total_piece' => $request['total_piece'][$a],
-          'price' => $request['price'][$a],
-          'amount' => $amount,
-          'tonnage' => $request['tonnage'][$a],
-          'footrun' => $request['tonnage'][$a] * 7200,
-        ]);
+          invoice_detail::create([
+            'invoice_id' => $invoice['id'],
+            'product_id' => $request['product_id'][$a],
+            'variation_id' => $request['variation'][$a],
+            'piece_col' => $request['piece'][$a],
+            'total_piece' => $request['total_piece'][$a],
+            'price' => $request['price'][$a],
+            'cost' => $request['cost'][$a],
+            'amount' => $amount,
+            'tonnage' => $request['tonnage'][$a],
+            'footrun' => $request['tonnage'][$a] * 7200,
+          ]);
+
+        }else{
+
+          invoice_detail::create([
+            'invoice_id' => $invoice['id'],
+            'product_id' => "Transportation",
+            'variation_id' => null,
+            'piece_col' => null,
+            'total_piece' => null,
+            'price' => $request['price'][$a],
+            'cost' => null,
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+          ]);
+
+        }
+
       }  
-    
-
       return back()->withInput();
-
     }
 
     public function getHistory(){
@@ -262,7 +311,9 @@ class MainController extends Controller
                                 ->select('invoice_detail.*','variation.display as display','product.name as product_name')
                                 ->get();
 
-      return view('edithistory',compact('current','detail','invoice'));
+      $transport = invoice_detail::where('product_id','LIKE','Transportation')->first();
+
+      return view('edithistory',compact('current','detail','invoice','transport'));
 
     }
 }

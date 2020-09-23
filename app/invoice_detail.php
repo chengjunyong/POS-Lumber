@@ -15,6 +15,7 @@ class invoice_detail extends Model
       'piece_col',
       'total_piece',
       'price',
+      'cost',
       'amount',
       'tonnage',
       'footrun',

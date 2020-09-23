@@ -8,11 +8,14 @@ class invoice extends Model
 {
     protected $table = 'invoice';
     protected $fillable = [
+      'invoice_code',
+      'year',
+      'index',
+      'do_number',
       'company_id',
-      'invoice_id',
       'pieces',
       'tonnage',
-      'price',
       'amount',
+      'invoice_date',
     ];
 }

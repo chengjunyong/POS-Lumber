@@ -19,7 +19,6 @@
 	          <th>Invoice Created Date</th>
 	          <th></th>
 	          <th></th>
-	          <th></th>
 	        </tr>
 	      </thead>
 	      <tbody>
@@ -33,7 +32,6 @@
 	        	<td>Rm {{ $result['amount'] }}</td>
 	        	<td>{{ $result['created_at'] }}</td>
 	        	<td style="padding: 0px 0px 0px 0px"><a href="{{ route('editHistory',$result['id']) }}"><button class="btn btn-secondary">Edit</button></a></td>
-	        	<td style="padding: 0px 0px 0px 0px"><a href="#"><button class="btn btn-danger">Void</button></a></td>
 	        	<td style="padding: 0px 0px 0px 0px"><a href="#"><button class="btn btn-success">Print</button></a></td>
 	        </tr>
 	        @endforeach

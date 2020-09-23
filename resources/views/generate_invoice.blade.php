@@ -27,6 +27,10 @@
 		font-size: 19px;
 	}
 
+	td{
+		padding : 1.15rem 5px !important;
+	}
+
 
 </style>
 <div class="page-title">
@@ -43,26 +47,39 @@
 					<i id="max" data-feather="maximize" style="height:2rem;float:right" c="0"></i>
 				</div>
 				<form action="{{route('postInvoice')}}" method="post">
-					<div style="margin-left: 30px">
-						<h5>To Company</h5>
-						<select name="company_id" class="form-control" style="width:25%">
-							@foreach($company as $result)
-								<option value="{{$result['id']}}">{{$result['company_name']}}</option>
-							@endforeach
-						</select>
+					<div class="row">
+						<h5 style="margin-left: 30px">Invoice Number - ({{ $invoice_number }})</h5>
+						<input type="text" hidden name="invoice_number" value="{{ $invoice_number }}" />
+						<div style="margin-left: 30px" class="col-3">
+							<h5>To Company</h5>
+							<select name="company_id" class="form-control">
+								@foreach($company as $result)
+									<option value="{{$result['id']}}">{{$result['company_name']}}</option>
+								@endforeach
+							</select>
+						</div>
+						<div class="col-3">
+							<h5>DO Number</h5>
+							<input type="text" class="form-control" name="do" required>
+						</div>
+						<div class="col-3">
+							<h5>Date</h5>
+							<input type="date" class="form-control" name="date" required>
+						</div>
 					</div>
 					@csrf
 					<div class="card-content">
 						<div class="card-body">
 							<table class="table">
 								<thead>
-									<th style="width:10%">Product Name</th>
+									<th style="width:12%">Product Name</th>
 									<th style="width:12%">Specification</th>
 									<th>Pieces <br/>1st value => pieces<br/>2nd value => inch</th>
 									<th style="width:10%">Total Pieces</th>
 									<th style="width:12%">Tonnage</th>
-									<th style="width:15%">Price</th>
-									<th style="width:15%">Amount</th>
+									<th style="width:12%">Price</th>
+									<th style="width:12%">Cost</th>
+									<th style="width:12%">Amount</th>
 								</thead>
 								<tbody id="append">
 									<tr>
@@ -71,6 +88,7 @@
 												@foreach($product as $result)
 													<option value="{{$result['id']}}">{{$result['name']}}</option>
 												@endforeach
+													<option value="transport">Transportation</option>
 											</select>
 										</td>
 										<td>
@@ -91,6 +109,9 @@
 										</td>
 										<td>
 											<input type="number" name="price[]" class="form-control price" required>
+										</td>
+										<td>
+											<input type="number" name="cost[]" class="form-control cost">
 										</td>
 										<td>
 											<input type="text" name="amount[]" class="form-control" readonly val="">
@@ -124,12 +145,13 @@
 
 	$("#add_p").click(function(){
 		let count = $("#append").children().length - 1;
-		let a = $("#append").children().eq(count).clone();
+		let a = $("#append").children().eq(count).clone().find("input").val("").end();
 		$("#append").append(a);
 
 		$(".product").change(function(){
 			$(this).children().attr('selected',false);
 			$(this).children("option:selected").attr('selected',true);
+
 		});
 
 		$(".pieces").keyup(function(){
@@ -251,6 +273,7 @@
 			ton = ton.toFixed(4);
 			target.parent().eq(0).siblings().eq(3).children().val(ton);
 			target.parent().eq(0).siblings().eq(2).children().val(total_piece);
+
 			cal3(target2);
 		},"json");
 	});
@@ -329,8 +352,8 @@
 
 	 	let display = new Intl.NumberFormat().format(amount);
 
-	 	target.parent().eq(0).siblings().eq(5).children().attr('val',amount);
-	  target.parent().eq(0).siblings().eq(5).children().val("Rm "+display);
+	 	target.parent().eq(0).siblings().eq(6).children().attr('val',amount);
+	  target.parent().eq(0).siblings().eq(6).children().val("Rm "+display);
 	}
 
 
@@ -344,8 +367,8 @@
 
 		let display2 = new Intl.NumberFormat().format(amount2);
 
-		target.parents().eq(0).siblings().eq(5).children().attr('val',amount2);
-	 	target.parents().eq(0).siblings().eq(5).children().val("Rm "+display2);
+		target.parents().eq(0).siblings().eq(6).children().attr('val',amount2);
+	 	target.parents().eq(0).siblings().eq(6).children().val("Rm "+display2);
 	}
 
 	$(".product").change(function(){
@@ -390,11 +413,11 @@
   	}
   });
 
-  $("#generate").on("click",function(event){
-  	event.preventDefault();
-  	console.log($("form").serializeArray());
-  	$("form").submit();
-  });
+  // $("#generate").on("click",function(event){
+  // 	event.preventDefault();
+  // 	console.log($("form").serializeArray());
+  // 	$("form").submit();
+  // });
 
 </script>
 
