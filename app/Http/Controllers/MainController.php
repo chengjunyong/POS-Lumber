@@ -297,6 +297,7 @@ class MainController extends Controller
     }
 
     public function editHistory(Request $request){
+
       $current = "invoice";
       $invoice_id = $request['id'];
 
@@ -308,12 +309,115 @@ class MainController extends Controller
       $detail = invoice_detail::join('variation','invoice_detail.variation_id','=','variation.id')
                                 ->join('product','invoice_detail.product_id','=','product.id')
                                 ->where('invoice_detail.invoice_id',$invoice_id)
-                                ->select('invoice_detail.*','variation.display as display','product.name as product_name')
+                                ->select('invoice_detail.*','variation.id as display','product.name as product_name')
                                 ->get();
 
-      $transport = invoice_detail::where('product_id','LIKE','Transportation')->first();
+      $transport = invoice_detail::where([['product_id','LIKE','Transportation'],['invoice_id',$invoice_id]])->first();
+      $product = product::get();
+      $variation = variation::get();
+      $company = company::get();
 
-      return view('edithistory',compact('current','detail','invoice','transport'));
+
+      return view('edithistory',compact('current','detail','invoice','transport','product','variation','company'));
+
+    }
+
+    public function postHistory(Request $request){
+
+      $count = count($request['product_id']);
+      $total_cost = 0;
+      $total_amount = 0;
+      $total_tonnage = 0;
+      $total_piece = 0;
+
+      for($a=0;$a<$count;$a++){
+        if($request['product_id'][$a] != "transport"){
+          $total_piece += floatval($request['total_piece'][$a]); 
+          $total_tonnage += floatval($request['tonnage'][$a]);
+
+          $tmp = $request['amount'][$a];
+          $tmp = str_replace("Rm ","",$tmp);
+          $tmp = str_replace(",","",$tmp);
+
+          $total_amount += floatval($tmp); 
+
+        }else{
+
+          $total_amount += floatval($request['price'][$a]);
+
+        }
+      }
+
+      $result = explode("/",$request['invoice_number']);
+      $index = intval($result[1]);
+      $year = $result[0];
+
+      $invoice = invoice::where('id',$request->invoice_id)->update([
+        'invoice_code' => $request['invoice_number'],
+        'do_number' => $request['do'],
+        'invoice_date' => $request['date'],
+        'year' => $year,
+        'index' => $index,
+        'company_id' => $request['company_id'],
+        'pieces' => $total_piece,
+        'tonnage' => $total_tonnage,
+        'amount' => $total_amount
+      ]);
+
+      $invoice = $request->invoice_id;
+
+      for($a=0;$a<$count;$a++){
+
+        if($request['product_id'][$a] != "transport"){
+          $amount = $request['amount'][$a];
+          $amount = str_replace("Rm ","",$amount);
+          $amount = str_replace(",","",$amount);
+
+          invoice_detail::updateOrCreate(['id'=>$request['invoice_detail_id'][$a]],[
+            'invoice_id' => $invoice,
+            'product_id' => $request['product_id'][$a],
+            'variation_id' => $request['variation'][$a],
+            'piece_col' => $request['piece'][$a],
+            'total_piece' => $request['total_piece'][$a],
+            'price' => $request['price'][$a],
+            'cost' => $request['cost'][$a],
+            'amount' => $amount,
+            'tonnage' => $request['tonnage'][$a],
+            'footrun' => $request['tonnage'][$a] * 7200,
+          ]);
+
+        }else{
+
+          invoice_detail::updateOrCreate(['id'=>$request['invoice_detail_id'][$a]],[
+            'invoice_id' => $invoice,
+            'product_id' => "Transportation",
+            'variation_id' => null,
+            'piece_col' => null,
+            'total_piece' => null,
+            'price' => $request['price'][$a],
+            'cost' => null,
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+          ]);
+
+        }
+
+      }
+
+      if($request->delete_invoice_detail_id != null){
+        invoice_detail::whereIn('id',$request->delete_invoice_detail_id)->delete();
+      }
+
+      return back()->with('success','Data has been successful modify');
+
+    }
+
+
+    public function ajaxDeleteRow(Request $request){
+
+
+      dd($request);
 
     }
 }

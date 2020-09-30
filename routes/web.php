@@ -44,3 +44,7 @@ Route::post('/postinvoice','MainController@postInvoice')->name('postInvoice');
 Route::get('/history','MainController@getHistory')->name('getHistory');
 
 Route::get('/edithistory{id}','MainController@editHistory')->name('editHistory');
+
+Route::post('/edithistory','MainController@postHistory')->name('postHistory');
+
+Route::post('/deleterow','MainController@ajaxDeleteRow')->name('ajaxDeleteRow');
