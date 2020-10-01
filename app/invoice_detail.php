@@ -12,6 +12,7 @@ class invoice_detail extends Model
       'invoice_id',
       'sub',
       'variation_id',
+      'variation_display',
       'piece_col',
       'total_piece',
       'price',

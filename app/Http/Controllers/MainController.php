@@ -246,6 +246,7 @@ class MainController extends Controller
       ]);
 
       for($a=0;$a<$count;$a++){
+        $variation = variation::where('id',$request['variation'][$a])->first();
 
         if($request['product_id'][$a] != "transport"){
           $amount = $request['amount'][$a];
@@ -256,6 +257,7 @@ class MainController extends Controller
             'invoice_id' => $invoice['id'],
             'product_id' => $request['product_id'][$a],
             'variation_id' => $request['variation'][$a],
+            'variation_display' => $variation['display'],
             'piece_col' => $request['piece'][$a],
             'total_piece' => $request['total_piece'][$a],
             'price' => $request['price'][$a],
@@ -271,6 +273,7 @@ class MainController extends Controller
             'invoice_id' => $invoice['id'],
             'product_id' => "Transportation",
             'variation_id' => null,
+            'variation_display' => null,
             'piece_col' => null,
             'total_piece' => null,
             'price' => $request['price'][$a],
@@ -283,7 +286,7 @@ class MainController extends Controller
         }
 
       }  
-      return back()->withInput();
+      return back()->with('success',"success");
     }
 
     public function getHistory(){
@@ -291,6 +294,7 @@ class MainController extends Controller
       $current = "invoice";
       $invoice = invoice::join("company","invoice.company_id","=","company.id")
                           ->select("invoice.*","company.company_name")
+                          ->orderBy('id','desc')
                           ->get();
 
       return view('history',compact('current','invoice'));
@@ -366,7 +370,8 @@ class MainController extends Controller
 
       $invoice = $request->invoice_id;
 
-      for($a=0;$a<$count;$a++){
+      for($a=0;$a<$count;$a++){ 
+        $variation = variation::where('id',$request['variation'][$a])->first();
 
         if($request['product_id'][$a] != "transport"){
           $amount = $request['amount'][$a];
@@ -377,6 +382,7 @@ class MainController extends Controller
             'invoice_id' => $invoice,
             'product_id' => $request['product_id'][$a],
             'variation_id' => $request['variation'][$a],
+            'variation_display' => $variation['display'],
             'piece_col' => $request['piece'][$a],
             'total_piece' => $request['total_piece'][$a],
             'price' => $request['price'][$a],
@@ -392,6 +398,7 @@ class MainController extends Controller
             'invoice_id' => $invoice,
             'product_id' => "Transportation",
             'variation_id' => null,
+            'variation_display' => null,
             'piece_col' => null,
             'total_piece' => null,
             'price' => $request['price'][$a],
@@ -413,11 +420,29 @@ class MainController extends Controller
 
     }
 
+    public function getPrintInvoice(Request $request){
 
-    public function ajaxDeleteRow(Request $request){
+      $invoice = invoice::where('id',$request->id)->first();
+
+      $invoice_detail = invoice_detail::join('variation','invoice_detail.variation_id','=','variation.id')
+                                ->join('product','invoice_detail.product_id','=','product.id')
+                                ->where('invoice_detail.invoice_id',$request->id)
+                                ->select('invoice_detail.*','product.name as product_name')
+                                ->orderBy('name','asc')
+                                ->get();
+      $sum = array();
+      $sum['piece'] = invoice_detail::where('invoice_id',$request->id)->sum('total_piece');
+      $sum['tonnage'] = invoice_detail::where('invoice_id',$request->id)->sum('tonnage');
+      $sum['amount'] = invoice_detail::where('invoice_id',$request->id)->sum('amount');
+
+      $transport = invoice_detail::where([['product_id','LIKE','Transportation'],['invoice_id',$request->id]])->first(); 
+
+      $company = company::where('id',$invoice->company_id)->first();
+
+      $a=1;
 
 
-      dd($request);
+      return view('print_invoice',compact('invoice','invoice_detail','transport','company','a','sum'));
 
     }
 }
