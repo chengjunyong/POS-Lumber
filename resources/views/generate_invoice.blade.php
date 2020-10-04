@@ -31,6 +31,10 @@
 		padding : 1.15rem 5px !important;
 	}
 
+	.tonnage{
+		cursor:pointer;
+	}
+
 
 </style>
 <div class="page-title">
@@ -105,7 +109,7 @@
 											<input type="number" name="total_piece[]" class="form-control" readonly>
 										</td>
 										<td>
-											<input type="text" name="tonnage[]" class="form-control tonnage" readonly>
+											<input type="text" name="tonnage[]" class="form-control tonnage" readonly data-ref="ton">
 										</td>
 										<td>
 											<input type="number" name="price[]" class="form-control price" required>
@@ -220,7 +224,19 @@
 			},"json");
 		});
 
-	})
+		$(".tonnage").unbind();
+		
+		$(".tonnage").click(function(){
+	  	if($(this).attr("data-ref") == "ton"){
+	  		$(this).css("background-color","#F2F4F4");
+	  		$(this).attr("data-ref","fr")
+	  	}else{
+	  		$(this).css("background-color","#1fed0d");
+	  		$(this).attr("data-ref","ton")
+	  	}
+	  });
+
+	});
 
 
 	$(".variation").change(function(){
@@ -418,6 +434,16 @@
   // 	console.log($("form").serializeArray());
   // 	$("form").submit();
   // });
+
+  $(".tonnage").click(function(){
+  	if($(this).attr("data-ref") == "ton"){
+  		$(this).css("background-color","#F2F4F4");
+  		$(this).attr("data-ref","fr")
+  	}else{
+  		$(this).css("background-color","#1fed0d");
+  		$(this).attr("data-ref","ton")
+  	}
+  })
 
 </script>
 

@@ -147,7 +147,7 @@
 					<td> <b>{{ $sum['piece'] }}</b></td>
 					<td><b>{{ $sum['tonnage'] }}</b></td>
 					<td></td>
-					<td><b>Rm {{ $sum['amount'] }}</b></td>
+					<td><b>{{ $sum['amount'] }}</b></td>
 				</tr>
 			</tfoot>
 		</table>
@@ -158,7 +158,7 @@
 
 <script src="../assets/js/jquery.min.js"></script>
 <script>
-	
+window.print();
 
 </script>
 

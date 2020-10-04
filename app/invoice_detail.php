@@ -9,6 +9,7 @@ class invoice_detail extends Model
     protected $table = 'invoice_detail';
     protected $fillable = [
       'product_id',
+      'product_name',
       'invoice_id',
       'sub',
       'variation_id',

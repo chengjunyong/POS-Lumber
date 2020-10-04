@@ -123,6 +123,7 @@ class MainController extends Controller
       $pro = str_replace(" ",'',$request['variation']);
       $pro = str_replace("."," ",$pro);
       $ans = explode("x",$pro);
+
       if($ans[0] != null && $ans[1] != null && is_numeric(floatval($ans[0])) && is_numeric(floatval($ans[1]))){
 
         $result = variation::create([
@@ -252,10 +253,12 @@ class MainController extends Controller
           $amount = $request['amount'][$a];
           $amount = str_replace("Rm ","",$amount);
           $amount = str_replace(",","",$amount);
+          $product_name = product::where('id',$request['product_id'][$a])->first();
 
           invoice_detail::create([
             'invoice_id' => $invoice['id'],
             'product_id' => $request['product_id'][$a],
+            'product_name' => $product_name['name'],
             'variation_id' => $request['variation'][$a],
             'variation_display' => $variation['display'],
             'piece_col' => $request['piece'][$a],
@@ -272,6 +275,7 @@ class MainController extends Controller
           invoice_detail::create([
             'invoice_id' => $invoice['id'],
             'product_id' => "Transportation",
+            'product_name' => "Transportation",
             'variation_id' => null,
             'variation_display' => null,
             'piece_col' => null,
@@ -373,14 +377,17 @@ class MainController extends Controller
       for($a=0;$a<$count;$a++){ 
         $variation = variation::where('id',$request['variation'][$a])->first();
 
+
         if($request['product_id'][$a] != "transport"){
           $amount = $request['amount'][$a];
           $amount = str_replace("Rm ","",$amount);
           $amount = str_replace(",","",$amount);
+          $product_name = product::where('id',$request['product_id'][$a])->first();
 
           invoice_detail::updateOrCreate(['id'=>$request['invoice_detail_id'][$a]],[
             'invoice_id' => $invoice,
             'product_id' => $request['product_id'][$a],
+            'product_name' => $product_name['name'],
             'variation_id' => $request['variation'][$a],
             'variation_display' => $variation['display'],
             'piece_col' => $request['piece'][$a],
@@ -397,6 +404,7 @@ class MainController extends Controller
           invoice_detail::updateOrCreate(['id'=>$request['invoice_detail_id'][$a]],[
             'invoice_id' => $invoice,
             'product_id' => "Transportation",
+            'product_name' => "Transportation",
             'variation_id' => null,
             'variation_display' => null,
             'piece_col' => null,
@@ -427,8 +435,8 @@ class MainController extends Controller
       $invoice_detail = invoice_detail::join('variation','invoice_detail.variation_id','=','variation.id')
                                 ->join('product','invoice_detail.product_id','=','product.id')
                                 ->where('invoice_detail.invoice_id',$request->id)
-                                ->select('invoice_detail.*','product.name as product_name')
-                                ->orderBy('name','asc')
+                                ->select('invoice_detail.*')
+                                ->orderBy('name','asc') 
                                 ->get();
       $sum = array();
       $sum['piece'] = invoice_detail::where('invoice_id',$request->id)->sum('total_piece');
