@@ -29,6 +29,7 @@
 
 	td{
 		padding : 1.15rem 5px !important;
+		vertical-align: top !important;
 	}
 
 	.tonnage{
@@ -103,7 +104,7 @@
 											</select>
 										</td>
 										<td>
-											<input type="text" class="form-control pieces" name="piece[]" placeholder="Example: 80/20,15/18" required>
+											<textarea rows="2" class="form-control pieces" name="piece[]" placeholder="Example: 80/20,15/18" required></textarea>
 										</td>
 										<td>
 											<input type="number" name="total_piece[]" class="form-control" readonly>
@@ -149,7 +150,7 @@
 
 	$("#add_p").click(function(){
 		let count = $("#append").children().length - 1;
-		let a = $("#append").children().eq(count).clone().find("input").val("").end();
+		let a = $("#append").children().eq(count).clone().find("input,textarea").val("").end();
 		$("#append").append(a);
 
 		$(".product").change(function(){
@@ -199,19 +200,26 @@
 				}else{
 					num2 = parseFloat(data['second']);
 				}
+				
+				//Piece Filter Start Here
+
 				let total_piece = 0;
-				if(!target.val().includes(",")){
-						b = target.val().split('/');
+				let c;
+
+				c = target.val().replace(/\n/g,",");
+
+				if(!c.includes(",")){
+						b = c.split('/');
 						total_piece += parseInt(b[0]);
 						ton += parseInt(b[0]) * parseInt(b[1]);
 				}else{
-					let a = target.val().split(",");
+					let a = c.split(",");
 					a.forEach(function(index){
 						b = index.split('/');
 						total_piece += parseInt(b[0]);
 						ton += parseInt(b[0]) * parseInt(b[1]);
 					});
-				}
+				}			
 
 				ton = (ton * num1 * num2) / 7200;
 				ton = ton.toFixed(4);
@@ -272,19 +280,27 @@
 			}else{
 				num2 = parseFloat(data['second']);
 			}
+
+			//Piece Filter Start Here
+
 			let total_piece = 0;
-			if(!target.val().includes(",")){
-					b = target.val().split('/');
+			let c;
+
+			c = target.val().replace(/\n/g,",");
+
+			if(!c.includes(",")){
+					b = c.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 			}else{
-				let a = target.val().split(",");
+				let a = c.split(",");
 				a.forEach(function(index){
 					b = index.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 				});
-			}
+			}			
+
 			ton = (ton * num1 * num2) / 7200;
 			ton = ton.toFixed(4);
 			target.parent().eq(0).siblings().eq(3).children().val(ton);
@@ -334,20 +350,25 @@
 				num2 = parseFloat(data['second']);
 			}
 
-			let total_piece = 0;
+			//Piece Filter Start Here
 
-			if(!target.val().includes(",")){
-					b = target.val().split('/');
+			let total_piece = 0;
+			let c;
+
+			c = target.val().replace(/\n/g,",");
+
+			if(!c.includes(",")){
+					b = c.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 			}else{
-				let a = target.val().split(",");
+				let a = c.split(",");
 				a.forEach(function(index){
 					b = index.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 				});
-			}
+			}												
 
 			ton = (ton * num1 * num2) / 7200;
 			ton = ton.toFixed(4);

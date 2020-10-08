@@ -11,6 +11,7 @@
 
 	td{
 		padding : 1.15rem 5px !important;
+		vertical-align: top !important; 
 	}
 	.cross{
 		cursor: pointer;
@@ -81,8 +82,9 @@
 											</select>
 										</td>
 										<td>
-											<input type="text" class="form-control pieces" name="piece[]" value="{{$result['piece_col']}}" required>
+											<textarea rows="2" class="form-control pieces" name="piece[]" placeholder="Example: 80/20,15/18" required>{{$result['piece_col']}}</textarea>
 										</td>
+
 										<td>
 											<input type="number" name="total_piece[]" class="form-control" value="{{ $result['total_piece'] }}" readonly>
 										</td>
@@ -90,8 +92,9 @@
 											<input type="text" name="tonnage[]" class="form-control tonnage" value="{{ $result['tonnage'] }}" readonly>
 										</td>
 										<td>
-											<input type="number" name="invoice_detail_id[]" class="form-control" hidden value="{{ $result['id'] }}">
 											<input style="font-size:18px" type="number" name="price[]" class="form-control price" value="{{ $result['price'] }}" step="0.01" required>
+											<input type="number" name="invoice_detail_id[]" class="form-control" hidden value="{{ $result['id'] }}">
+
 										</td>
 										<td>
 											<input type="number" name="cost[]" class="form-control cost" value="{{$result['cost']}}">
@@ -164,7 +167,7 @@
 	});
 
 	$("#add_p").click(function(){
-		let a = $("#append").children().eq(0).clone().find("input").val("").end();
+		let a = $("#append").children().eq(0).clone().find("input,textarea").val("").end();
 		$("#append").append(a);
 
 		$(".cross").click(function(){
@@ -220,19 +223,25 @@
 				}else{
 					num2 = parseFloat(data['second']);
 				}
+				//Piece Filter Start Here
+
 				let total_piece = 0;
-				if(!target.val().includes(",")){
-						b = target.val().split('/');
+				let c;
+
+				c = target.val().replace(/\n/g,",");
+
+				if(!c.includes(",")){
+						b = c.split('/');
 						total_piece += parseInt(b[0]);
 						ton += parseInt(b[0]) * parseInt(b[1]);
 				}else{
-					let a = target.val().split(",");
+					let a = c.split(",");
 					a.forEach(function(index){
 						b = index.split('/');
 						total_piece += parseInt(b[0]);
 						ton += parseInt(b[0]) * parseInt(b[1]);
 					});
-				}
+				}		
 
 				ton = (ton * num1 * num2) / 7200;
 				ton = ton.toFixed(4);
@@ -243,6 +252,7 @@
 				cal3(target2);
 
 			},"json");
+
 		});
 
 	})
@@ -281,25 +291,33 @@
 			}else{
 				num2 = parseFloat(data['second']);
 			}
+			//Piece Filter Start Here
+
 			let total_piece = 0;
-			if(!target.val().includes(",")){
-					b = target.val().split('/');
+			let c;
+
+			c = target.val().replace(/\n/g,",");
+
+			if(!c.includes(",")){
+					b = c.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 			}else{
-				let a = target.val().split(",");
+				let a = c.split(",");
 				a.forEach(function(index){
 					b = index.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 				});
-			}
+			}		
+				
 			ton = (ton * num1 * num2) / 7200;
 			ton = ton.toFixed(4);
 			target.parent().eq(0).siblings().eq(3).children().val(ton);
 			target.parent().eq(0).siblings().eq(2).children().val(total_piece);
 
 			cal3(target2);
+
 		},"json");
 	});
 
@@ -343,20 +361,25 @@
 				num2 = parseFloat(data['second']);
 			}
 
-			let total_piece = 0;
+			//Piece Filter Start Here
 
-			if(!target.val().includes(",")){
-					b = target.val().split('/');
+			let total_piece = 0;
+			let c;
+
+			c = target.val().replace(/\n/g,",");
+
+			if(!c.includes(",")){
+					b = c.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 			}else{
-				let a = target.val().split(",");
+				let a = c.split(",");
 				a.forEach(function(index){
 					b = index.split('/');
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 				});
-			}
+			}		
 
 			ton = (ton * num1 * num2) / 7200;
 			ton = ton.toFixed(4);
@@ -384,8 +407,13 @@
 
 	function cal3(target){
 
+
+
 		let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
 		let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
+
+		console.log(ton2);
+		console.log(target.parents().eq(0).siblings().eq(4).children());
 
 		let amount2 = price2 * ton2;
 		amount2 = amount2.toFixed(2);

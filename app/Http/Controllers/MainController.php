@@ -205,7 +205,7 @@ class MainController extends Controller
     }
 
     public function postInvoice(Request $request){
-      
+
       $count = count($request['product_id']);
       $total_cost = 0;
       $total_amount = 0;
@@ -438,6 +438,62 @@ class MainController extends Controller
                                 ->select('invoice_detail.*')
                                 ->orderBy('name','asc') 
                                 ->get();
+
+      $piece = array();
+      $bundle_piece = array();
+      $bundle_col = array();
+      foreach($invoice_detail as $key => $result){
+        if(preg_match("/[\r|\n]+/",$result->piece_col) == 1){
+          $piece = preg_split("/[\r|\n]+/",$result->piece_col);
+          $invoice_detail[$key]->setAttribute("bundle",1);
+
+          foreach($piece as $data1){
+            $sum = 0;
+            $data2 = explode(",",$data1);
+
+            foreach($data2 as $data3){
+              $data4 = explode("/",$data3);
+              $sum += intval($data4[0]);
+            }
+
+            $text = $data1;
+            if(strlen($data1)>=48){
+              $total_break = "";
+              $line = intval(floatval(strlen($data1)) / 47);
+
+              if($line == 1){
+                $total_break = $total_break."<br/><br/>";
+              }else{
+                for($a=0;$a<$line;$a++){
+                  $total_break = $total_break."<br/>";
+                }
+              }
+
+              $sum = $sum.$total_break;
+              $text = $data1;
+
+            }else{
+              $text = $data1;
+              $sum .= "<br/>";
+            }
+
+            array_push($bundle_col,$text);
+            array_push($bundle_piece,$sum);
+          }
+
+          $invoice_detail[$key]->setAttribute("bundle_piece",$bundle_piece);
+          $invoice_detail[$key]->setAttribute("bundle_col",$bundle_col);
+
+        }else{
+
+          $invoice_detail[$key]->setAttribute("bundle_col",null);
+          $invoice_detail[$key]->setAttribute("bundle",0);
+        }
+      }   
+
+
+      // dd($invoice_detail);
+
       $sum = array();
       $sum['piece'] = invoice_detail::where('invoice_id',$request->id)->sum('total_piece');
       $sum['tonnage'] = invoice_detail::where('invoice_id',$request->id)->sum('tonnage');
@@ -448,7 +504,6 @@ class MainController extends Controller
       $company = company::where('id',$invoice->company_id)->first();
 
       $a=1;
-
 
       return view('print_invoice',compact('invoice','invoice_detail','transport','company','a','sum'));
 

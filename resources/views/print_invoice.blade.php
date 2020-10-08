@@ -38,6 +38,7 @@
 
 	td{
 		padding: 10px 0px 10px 0px;
+		vertical-align: top;
 	}
 
 	.last > td{
@@ -47,6 +48,9 @@
 	@media print{
 		.main{
 			padding-top: 17.5%;
+		}
+		body{
+			margin: 0px 0px 0px 0px;
 		}
 
 	}
@@ -80,53 +84,54 @@
 	<div class="main">
 		<table align="center" style="width:100%;">
 			<thead style="margin-bottom: 10px;border-top: 2px solid;border-bottom:2px solid">
-				<th style="width:5%">NO</th>
-				<th style="width:55%;text-align: center;">DESCRIPTION</th>
-				<th style="width:10%">PIECES</th>
-				<th style="width:10%">TONNAGE</th>
-				<th style="width:10%">RATE <br/>(RM)</th>
-				<th style="width:10%">AMOUNT <br/>(RM)</th>
+				<th style="width:1%">NO</th>
+				<th style="width:50%;text-align: center;">DESCRIPTION</th>
+				<th style="width:10%;text-align: center">PIECES</th>
+				<th style="width:8%">TONNAGE</th>
+				<th style="width:7%">RATE <br/>(RM)</th>
+				<th style="width:5%">AMOUNT <br/>(RM)</th>
 			</thead>
 			<tbody style="">
 				@foreach($invoice_detail as $key => $result)
-					@if ($loop->last && $transport == null)
-						<tr class="last">
-							<td>{{ $a++ }}</td>
-							<td>
-								<div style="display:grid;grid-template-columns:10% 20% 70%;grid-gap: 10px;">
-									<div>{{$result->product_name}}</div>
-									<div>{!!$result->variation_display!!}</div>
-									<div><b>{{ str_replace(',',' ',$result->piece_col) }} {{ str_replace(',',' ',$result->piece_col) }} {{ str_replace(',',' ',$result->piece_col) }}</b></div>
+					<tr>
+						<td style="vertical-align: top;">{{ $a++ }}</td>
+						<td>
+							<div style="display:grid;grid-template-columns:5% 20% 75%;grid-gap: 10px;">
+								<div>{{$result->product_name}}</div>
+								<div>{!!$result->variation_display!!}</div>
+								<div>
+									<b>
+										@if($result->bundle == 1)
+											@foreach($result->bundle_col as $output)
+												{!! str_replace(',',' ',$output) !!}<br/>
+											@endforeach
+										@else
+											{!! str_replace(',',' ',$result->piece_col) !!}
+										@endif
+									</b>
 								</div>
-							</td>
-							<td>{{ $result->total_piece }}</td>
-							<td>{{ $result->tonnage }}</td>
-							<td>{{ $result->price }}/T</td>
-							<td>{{ $result->amount }}</td>
-						</tr>
-					@else
-						<tr>
-							<td>{{ $a++ }}</td>
-							<td>
-								<div style="display:grid;grid-template-columns:10% 20% 70%;grid-gap: 10px;">
-									<div>{{$result->product_name}}</div>
-									<div>{!!$result->variation_display!!}</div>
-									<div><b>{{ str_replace(',',' ',$result->piece_col) }} {{ str_replace(',',' ',$result->piece_col) }} {{ str_replace(',',' ',$result->piece_col) }}</b></div>
-								</div>
-							</td>
-							<td>{{ $result->total_piece }}</td>
-							<td>{{ $result->tonnage }}</td>
-							<td>{{ $result->price }}/T</td>
-							<td>{{ $result->amount }}</td>
-						</tr>
-					@endif
+							</div>
+						</td>
+						<td style="text-align: center">
+							@if($result->bundle == 1)
+									@foreach($result->bundle_piece as $output)
+										{!! $output !!}
+									@endforeach
+							@else
+								{!! $result->total_piece !!}
+							@endif
+						</td>
+						<td>{{ $result->tonnage }}</td>
+						<td>{{ $result->price }}/T</td>
+						<td>{{ $result->amount }}</td>
+					</tr>
 				@endforeach
 
 				@if($transport != null)
 					<tr class="last">
 						<td>{{ $a }}</td>
 						<td>
-							<div style="display:grid;grid-template-columns:10% 20% 70%;grid-gap: 10px;">
+							<div style="display:grid;grid-template-columns:5% 20% 75%;grid-gap: 10px;">
 								<div>Transportation</div>
 								<div></div>
 								<div></div>
