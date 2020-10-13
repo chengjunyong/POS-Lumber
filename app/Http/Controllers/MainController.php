@@ -217,16 +217,17 @@ class MainController extends Controller
           $total_piece += floatval($request['total_piece'][$a]); 
           $total_tonnage += floatval($request['tonnage'][$a]);
 
-          $tmp = $request['amount'][$a];
-          $tmp = str_replace("Rm ","",$tmp);
-          $tmp = str_replace(",","",$tmp);
-
-          $total_amount += floatval($tmp); 
+          if(is_numeric($request['amount'][$a]) == true){
+            $tmp = $request['amount'][$a];
+            $tmp = str_replace("Rm ","",$tmp);
+            $tmp = str_replace(",","",$tmp);
+            $total_amount += floatval($tmp); 
+          }
 
         }else{
-
-          $total_amount += floatval($request['price'][$a]);
-
+          if(is_numeric($request['amount'][$a]) == true){
+            $total_amount += floatval($request['price'][$a]);
+          }
         }
       }
 
@@ -248,13 +249,23 @@ class MainController extends Controller
 
       for($a=0;$a<$count;$a++){
         $variation = variation::where('id',$request['variation'][$a])->first();
+        if($request['cal_type'][$a] == "fr"){
+          $cal_type = 1;
+        }else{
+          $cal_type = null;
+        }
+
 
         if($request['product_id'][$a] != "transport"){
-          $amount = $request['amount'][$a];
-          $amount = str_replace("Rm ","",$amount);
-          $amount = str_replace(",","",$amount);
-          $product_name = product::where('id',$request['product_id'][$a])->first();
+          if(is_numeric($request['amount'][$a])){
+            $amount = $request['amount'][$a];
+            $amount = str_replace("Rm ","",$amount);
+            $amount = str_replace(",","",$amount);
+          }else{
+            $amount = null;
+          }
 
+          $product_name = product::where('id',$request['product_id'][$a])->first();
           invoice_detail::create([
             'invoice_id' => $invoice['id'],
             'product_id' => $request['product_id'][$a],
@@ -268,6 +279,7 @@ class MainController extends Controller
             'amount' => $amount,
             'tonnage' => $request['tonnage'][$a],
             'footrun' => $request['tonnage'][$a] * 7200,
+            'cal_type' => $cal_type
           ]);
 
         }else{
@@ -285,6 +297,7 @@ class MainController extends Controller
             'amount' => $request['price'][$a],
             'tonnage' => null,
             'footrun' => null,
+            'cal_type' => null
           ]);
 
         }

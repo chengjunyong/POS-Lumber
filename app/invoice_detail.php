@@ -21,5 +21,6 @@ class invoice_detail extends Model
       'amount',
       'tonnage',
       'footrun',
+      'cal_type',
     ];
 }

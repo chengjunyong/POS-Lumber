@@ -32,11 +32,6 @@
 		vertical-align: top !important;
 	}
 
-	.tonnage{
-		cursor:pointer;
-	}
-
-
 </style>
 <div class="page-title">
   <h3>Invoice</h3>
@@ -77,13 +72,14 @@
 						<div class="card-body">
 							<table class="table">
 								<thead>
-									<th style="width:12%">Product Name</th>
-									<th style="width:12%">Specification</th>
-									<th>Pieces <br/>1st value => pieces<br/>2nd value => inch</th>
+									<th style="width:5%">Product Name</th>
+									<th style="width:8%">Specification</th>
+									<th style="width:15%">Pieces <br/>1st value => pieces<br/>2nd value => inch</th>
 									<th style="width:10%">Total Pieces</th>
 									<th style="width:12%">Tonnage</th>
 									<th style="width:12%">Price</th>
 									<th style="width:12%">Cost</th>
+									<th style="width:5%"></th>
 									<th style="width:12%">Amount</th>
 								</thead>
 								<tbody id="append">
@@ -107,19 +103,24 @@
 											<textarea rows="2" class="form-control pieces" name="piece[]" placeholder="Example: 80/20,15/18" required></textarea>
 										</td>
 										<td>
-											<input type="number" name="total_piece[]" class="form-control" readonly>
+											<input type="number" name="total_piece[]" class="form-control t_piece" readonly>
 										</td>
 										<td>
 											<input type="text" name="tonnage[]" class="form-control tonnage" readonly data-ref="ton">
 										</td>
 										<td>
-											<input type="number" name="price[]" class="form-control price" required>
+											<input type="number" name="price[]" class="form-control price" step="0.01" required>
 										</td>
 										<td>
 											<input type="number" name="cost[]" class="form-control cost">
 										</td>
+										<td style="text-align: center">
+											<input type="hidden" name="cal_type[]" value="ton" />
+											<input type="checkbox" class="form-check-input cal_type" name="cal_type[]" value="fr" />
+											<div>Footrun</div>
+										</td>
 										<td>
-											<input type="text" name="amount[]" class="form-control" readonly val="">
+											<input type="text" name="amount[]" class="form-control amount" readonly val="">
 										</td>
 									</tr>
 								</tbody>
@@ -148,9 +149,10 @@
 		cal2($(this));
 	});
 
+	//Start Here
 	$("#add_p").click(function(){
 		let count = $("#append").children().length - 1;
-		let a = $("#append").children().eq(count).clone().find("input,textarea").val("").end();
+		let a = $("#append").children().eq(count).clone().find(".t_piece,.tonnage,.price,.cost,.amount,textarea").val("").end();
 		$("#append").append(a);
 
 		$(".product").change(function(){
@@ -244,8 +246,47 @@
 	  	}
 	  });
 
+		$(".cal_type").unbind();
+		//Checkbox Button
+		$(".cal_type").change(function(){
+			let fr = 0;
+			let price,total;
+
+			if(this.checked){
+				console.log("Yes");
+				$(this).siblings().eq(0).prop("disabled",true);
+
+				price = $(this).parent().eq(0).siblings().eq(5).children().val();
+				fr = $(this).parent().eq(0).siblings().eq(4).children().val();
+				fr = Math.round(fr * 7200);
+				total = price * fr;
+				total = total.toFixed(2);
+
+				let display = new Intl.NumberFormat().format(total);
+
+		 		$(this).parent().eq(0).siblings().eq(7).children().attr('val',total);
+		  	$(this).parent().eq(0).siblings().eq(7).children().val("Rm "+display);
+
+			}else{
+				console.log("No");
+				$(this).siblings().eq(0).prop("disabled",false);
+
+				let ton3 = parseFloat($(this).parents().eq(0).siblings().eq(4).children().val());
+				let price3 = parseFloat($(this).parents().eq(0).siblings().eq(5).children().val());
+
+				let amount3 = price3 * ton3;
+				amount3 = amount3.toFixed(2);
+
+				let display3 = new Intl.NumberFormat().format(amount3);
+
+				$(this).parents().eq(0).siblings().eq(7).children().attr('val',amount3);
+			 	$(this).parents().eq(0).siblings().eq(7).children().val("Rm "+display3);
+			}
+		});
+
 	});
 
+	//End Here
 
 	$(".variation").change(function(){
 		let target = $(this).parents().eq(0).siblings().eq(1).children();
@@ -309,6 +350,45 @@
 			cal3(target2);
 		},"json");
 	});
+
+
+	//Checkbox Button
+	$(".cal_type").change(function(){
+		let fr = 0;
+		let price,total;
+
+		if(this.checked){
+			console.log("Yes");
+			$(this).siblings().eq(0).prop("disabled",true);
+
+			price = $(this).parent().eq(0).siblings().eq(5).children().val();
+			fr = $(this).parent().eq(0).siblings().eq(4).children().val();
+			fr = Math.round(fr * 7200);
+			total = price * fr;
+			total = total.toFixed(2);
+
+			let display = new Intl.NumberFormat().format(total);
+
+	 		$(this).parent().eq(0).siblings().eq(7).children().attr('val',total);
+	  	$(this).parent().eq(0).siblings().eq(7).children().val("Rm "+display);
+
+		}else{
+			console.log("No");
+			$(this).siblings().eq(0).prop("disabled",false);
+
+			let ton3 = parseFloat($(this).parents().eq(0).siblings().eq(4).children().val());
+			let price3 = parseFloat($(this).parents().eq(0).siblings().eq(5).children().val());
+
+			let amount3 = price3 * ton3;
+			amount3 = amount3.toFixed(2);
+
+			let display3 = new Intl.NumberFormat().format(amount3);
+
+			$(this).parents().eq(0).siblings().eq(7).children().attr('val',amount3);
+		 	$(this).parents().eq(0).siblings().eq(7).children().val("Rm "+display3);
+		}
+	});
+
 
 	function cal1(target){
 
@@ -381,31 +461,60 @@
 	}
 
 	function cal2(target){
-		let price = parseFloat(target.val());
-	 	let ton = parseFloat(target.parent().eq(0).siblings().eq(4).children().val());
+		let amount = 0;
+		let display;
+		if(target.parent().eq(0).siblings().eq(6).children().eq(1).prop("checked") == false){
 
-	 	let amount = price * ton;
-	 	amount = amount.toFixed(2);
+			let price = parseFloat(target.val());
+		 	let ton = parseFloat(target.parent().eq(0).siblings().eq(4).children().val());
+		 	amount = price * ton;
+		 	amount = amount.toFixed(2);
+		 	display = new Intl.NumberFormat().format(amount);
 
-	 	let display = new Intl.NumberFormat().format(amount);
+		 }else{
 
-	 	target.parent().eq(0).siblings().eq(6).children().attr('val',amount);
-	  target.parent().eq(0).siblings().eq(6).children().val("Rm "+display);
+		 	let price = parseFloat(target.val());
+		 	let ton = parseFloat(target.parent().eq(0).siblings().eq(4).children().val());
+		 	ton = Math.round(ton * 7200);
+		 	amount = price * ton;
+		 	amount = amount.toFixed(2);
+		 	display = new Intl.NumberFormat().format(amount);
+
+		 }
+
+	 	target.parent().eq(0).siblings().eq(7).children().attr('val',amount);
+	  target.parent().eq(0).siblings().eq(7).children().val("Rm "+display);
 	}
 
 
 	function cal3(target){
+		let amount2 = 0;
+		let display2;
+		if(target.parent().eq(0).siblings().eq(6).children().eq(1).prop("checked") == false){
 
-		let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
-		let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
+			let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
+			let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
 
-		let amount2 = price2 * ton2;
-		amount2 = amount2.toFixed(2);
+			amount2 = price2 * ton2;
+			amount2 = amount2.toFixed(2);
 
-		let display2 = new Intl.NumberFormat().format(amount2);
+			display2 = new Intl.NumberFormat().format(amount2);
 
-		target.parents().eq(0).siblings().eq(6).children().attr('val',amount2);
-	 	target.parents().eq(0).siblings().eq(6).children().val("Rm "+display2);
+		}else{
+
+			let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
+			let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
+
+			ton2 = Math.round(ton2*7200);
+			amount2 = price2 * ton2;
+			amount2 = amount2.toFixed(2);
+
+			display2 = new Intl.NumberFormat().format(amount2);
+		}
+
+		target.parents().eq(0).siblings().eq(7).children().attr('val',amount2);
+	 	target.parents().eq(0).siblings().eq(7).children().val("Rm "+display2);
+
 	}
 
 	$(".product").change(function(){
@@ -452,19 +561,9 @@
 
   // $("#generate").on("click",function(event){
   // 	event.preventDefault();
-  // 	console.log($("form").serializeArray());
+  // 	var b = $("form").serializeArray();
   // 	$("form").submit();
   // });
-
-  $(".tonnage").click(function(){
-  	if($(this).attr("data-ref") == "ton"){
-  		$(this).css("background-color","#F2F4F4");
-  		$(this).attr("data-ref","fr")
-  	}else{
-  		$(this).css("background-color","#1fed0d");
-  		$(this).attr("data-ref","ton")
-  	}
-  })
 
 </script>
 
