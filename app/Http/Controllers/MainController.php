@@ -9,6 +9,8 @@ use App\product;
 use App\variation;
 use App\invoice;
 use App\invoice_detail;
+use App\cashbook;
+
 class MainController extends Controller
 {
     public function getIndex(){
@@ -18,7 +20,7 @@ class MainController extends Controller
 
     public function getCompany(){
     	$current = "company";
-    	$allCompany = company::get();
+    	$allCompany = company::where('active','1')->get();
 
     	return view('company',compact('allCompany','current'));
 
@@ -38,11 +40,19 @@ class MainController extends Controller
     		'contact' => $request['contact'],
     		'city' => $request['city'],
     		'state' => $request['state'],
-    		'postcode' => $request['postcode']
+    		'postcode' => $request['postcode'],
+        'active' => 1,
     	]);
 
     	return view("add_profile",compact('current','result'));
 
+    }
+
+    public function ajaxDeleteCompany(Request $request)
+    {
+      $result = company::where('id',$request->id)->update(['active' => 0]);
+
+      return $result;
     }
 
     public function editProfile(Request $request){
@@ -175,7 +185,7 @@ class MainController extends Controller
 
     public function getInvoice(){
       $current = "invoice"; 
-      $company = company::get();
+      $company = company::where('active','1')->get();
       $product = product::get();
       $variation = variation::get();
 
@@ -217,17 +227,16 @@ class MainController extends Controller
           $total_piece += floatval($request['total_piece'][$a]); 
           $total_tonnage += floatval($request['tonnage'][$a]);
 
-          if(is_numeric($request['amount'][$a]) == true){
-            $tmp = $request['amount'][$a];
-            $tmp = str_replace("Rm ","",$tmp);
-            $tmp = str_replace(",","",$tmp);
-            $total_amount += floatval($tmp); 
-          }
+          $tmp = $request['amount'][$a];
+          $tmp = str_replace("Rm ","",$tmp);
+          $tmp = str_replace(",","",$tmp);
+          $tmp = floatval($tmp);
+          $total_amount += $tmp; 
 
         }else{
-          if(is_numeric($request['amount'][$a]) == true){
-            $total_amount += floatval($request['price'][$a]);
-          }
+          
+          $total_amount += $request['price'][$a]; 
+
         }
       }
 
@@ -247,6 +256,15 @@ class MainController extends Controller
         'amount' => $total_amount
       ]);
 
+      $company_name = company::where('id',$request['company_id'])->first();
+
+      cashbook::create([
+        'company_id' => $request['company_id'],
+        'company_name' => $company_name['company_name'],
+        'type' => 'debit',
+        'amount' => $total_amount
+      ]);
+
       for($a=0;$a<$count;$a++){
         $variation = variation::where('id',$request['variation'][$a])->first();
         if($request['cal_type'][$a] == "fr"){
@@ -257,14 +275,11 @@ class MainController extends Controller
 
 
         if($request['product_id'][$a] != "transport"){
-          if(is_numeric($request['amount'][$a])){
-            $amount = $request['amount'][$a];
-            $amount = str_replace("Rm ","",$amount);
-            $amount = str_replace(",","",$amount);
-          }else{
-            $amount = null;
-          }
 
+          $amount = $request['amount'][$a];
+          $amount = str_replace("Rm ","",$amount);
+          $amount = str_replace(",","",$amount);
+          
           $product_name = product::where('id',$request['product_id'][$a])->first();
           invoice_detail::create([
             'invoice_id' => $invoice['id'],
@@ -336,7 +351,7 @@ class MainController extends Controller
       $transport = invoice_detail::where([['product_id','LIKE','Transportation'],['invoice_id',$invoice_id]])->first();
       $product = product::get();
       $variation = variation::get();
-      $company = company::get();
+      $company = company::where('active','1')->get();
 
 
       return view('edithistory',compact('current','detail','invoice','transport','product','variation','company'));
@@ -344,6 +359,8 @@ class MainController extends Controller
     }
 
     public function postHistory(Request $request){
+
+      invoice_detail::whereIn('id',$request->invoice_detail_id)->delete();
 
       $count = count($request['product_id']);
       $total_cost = 0;
@@ -363,9 +380,7 @@ class MainController extends Controller
           $total_amount += floatval($tmp); 
 
         }else{
-
           $total_amount += floatval($request['price'][$a]);
-
         }
       }
 
@@ -389,7 +404,11 @@ class MainController extends Controller
 
       for($a=0;$a<$count;$a++){ 
         $variation = variation::where('id',$request['variation'][$a])->first();
-
+        if($request['cal_type'][$a] == "fr"){
+          $cal_type = 1;
+        }else{
+          $cal_type = null;
+        }
 
         if($request['product_id'][$a] != "transport"){
           $amount = $request['amount'][$a];
@@ -397,7 +416,7 @@ class MainController extends Controller
           $amount = str_replace(",","",$amount);
           $product_name = product::where('id',$request['product_id'][$a])->first();
 
-          invoice_detail::updateOrCreate(['id'=>$request['invoice_detail_id'][$a]],[
+          invoice_detail::create([
             'invoice_id' => $invoice,
             'product_id' => $request['product_id'][$a],
             'product_name' => $product_name['name'],
@@ -410,11 +429,12 @@ class MainController extends Controller
             'amount' => $amount,
             'tonnage' => $request['tonnage'][$a],
             'footrun' => $request['tonnage'][$a] * 7200,
+            'cal_type' => $cal_type
           ]);
 
         }else{
 
-          invoice_detail::updateOrCreate(['id'=>$request['invoice_detail_id'][$a]],[
+          invoice_detail::create([
             'invoice_id' => $invoice,
             'product_id' => "Transportation",
             'product_name' => "Transportation",
@@ -502,14 +522,13 @@ class MainController extends Controller
           $invoice_detail[$key]->setAttribute("bundle_col",null);
           $invoice_detail[$key]->setAttribute("bundle",0);
         }
-      }   
-
-
-      // dd($invoice_detail);
+      }
 
       $sum = array();
       $sum['piece'] = invoice_detail::where('invoice_id',$request->id)->sum('total_piece');
-      $sum['tonnage'] = invoice_detail::where('invoice_id',$request->id)->sum('tonnage');
+
+      $sum['tonnage'] = invoice_detail::where('invoice_id',$request->id)->where('cal_type',null)->sum('tonnage');
+
       $sum['amount'] = invoice_detail::where('invoice_id',$request->id)->sum('amount');
 
       $transport = invoice_detail::where([['product_id','LIKE','Transportation'],['invoice_id',$request->id]])->first(); 
@@ -521,5 +540,45 @@ class MainController extends Controller
       return view('print_invoice',compact('invoice','invoice_detail','transport','company','a','sum'));
 
     }
+
+    public function getCashBook()
+    {
+      $current = "report";
+      $company = company::where('active','1')->get();
+
+      return view('cashbook',compact('current','company'));
+    }
+
+    public function postCashBook(Request $request)
+    {
+      dd($request);
+
+    }
+
+    public function getPayment()
+    {
+      $current = "payment";
+      $company = company::where('active','1')->get();
+
+      return view('payment',compact('current','company'));
+    }
+
+    public function postIssuePayment(Request $request)
+    {
+      $company_name = company::where('id',$request->id)->first();
+
+      cashbook::create([
+        'company_id' => $request->id,
+        'company_name' => $company_name['company_name'],
+        'type' => 'credit',
+        'amount' => $request->amount
+      ]);
+
+
+      return back()->with('success','Payment has been recorded');
+    }
+
+
 }
+
 

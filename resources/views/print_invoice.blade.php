@@ -121,9 +121,15 @@
 								{!! $result->total_piece !!}
 							@endif
 						</td>
-						<td>{{ $result->tonnage }}</td>
-						<td>{{ $result->price }}/T</td>
-						<td>{{ $result->amount }}</td>
+						<td>
+							@if($result->cal_type == null)
+							{{ $result->tonnage }}
+							@else
+							{{ round($result->tonnage * 7200) }} (FR)
+							@endif
+						</td>
+						<td>{{ $result->price }}/{{ ($result->cal_type == null) ? 'T' : 'FR' }}</td>
+						<td>{{ number_format($result->amount,2) }}</td>
 					</tr>
 				@endforeach
 
@@ -149,10 +155,10 @@
 				<tr>
 					<td></td>
 					<td style="text-align: center"><b>Total :</b></td>
-					<td> <b>{{ $sum['piece'] }}</b></td>
+					<td style="text-align: center"><b>{{ $sum['piece'] }}</b></td>
 					<td><b>{{ $sum['tonnage'] }}</b></td>
 					<td></td>
-					<td><b>{{ $sum['amount'] }}</b></td>
+					<td><b>{{ number_format($sum['amount'],2) }}</b></td>
 				</tr>
 			</tfoot>
 		</table>

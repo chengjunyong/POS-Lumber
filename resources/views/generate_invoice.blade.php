@@ -19,6 +19,7 @@
 	  </div>
   </div>
 </div>
+
 <button id="dark_btn" type="button" class="btn btn-outline-dark" data-toggle="modal" data-target="#dark" hidden></button>
 
 <style>
@@ -112,7 +113,7 @@
 											<input type="number" name="price[]" class="form-control price" step="0.01" required>
 										</td>
 										<td>
-											<input type="number" name="cost[]" class="form-control cost">
+											<input type="number" name="cost[]" class="form-control cost" step="0.01">
 										</td>
 										<td style="text-align: center">
 											<input type="hidden" name="cal_type[]" value="ton" />

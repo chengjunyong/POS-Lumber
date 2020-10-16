@@ -14,5 +14,6 @@ class company extends Model
       'city',
       'postcode',
       'state',
+      'active',
     ];
 }

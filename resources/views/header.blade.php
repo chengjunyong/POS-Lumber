@@ -71,7 +71,26 @@
                     <a href="{{route('getHistory')}}">History</a>
                 </li>
               </ul>
-            </li>    
+            </li> 
+
+            <li class="sidebar-item {{ $current == 'report' ? 'active' : '' }} has-sub" >
+              <a href="#" class='sidebar-link'>
+                <i data-feather="bar-chart-2" width="20"></i> 
+                <span>Report</span>
+              </a>
+              <ul class="submenu {{ $current == 'report' ? 'active' : '' }}">
+                <li>
+                    <a href="{{ route('getCashBook') }}">Cashbook</a>
+                </li>
+              </ul>
+            </li> 
+
+            <li class="sidebar-item {{ $current == 'payment' ? 'active' : '' }}" >
+              <a href="{{ route('getPayment') }}" class='sidebar-link'>
+                <i data-feather="dollar-sign" width="20"></i> 
+                <span>Payment</span>
+              </a>
+            </li>     
 
           </ul>
         </div>

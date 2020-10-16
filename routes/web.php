@@ -50,3 +50,13 @@ Route::post('/edithistory','MainController@postHistory')->name('postHistory');
 Route::post('/deleterow','MainController@ajaxDeleteRow')->name('ajaxDeleteRow');
 
 Route::get('/printInvoice/{id}','MainController@getPrintInvoice')->name('getPrintInvoice');
+
+Route::get('/cashbook','MainController@getCashBook')->name('getCashBook');
+
+Route::get('/payment','MainController@getPayment')->name('getPayment');
+
+Route::post('/ajaxDeleteCompany','MainController@ajaxDeleteCompany')->name('ajaxDeleteCompany');
+
+Route::post('/issuepayment','MainController@postIssuePayment')->name('postIssuePayment');
+
+Route::post('/postcashbook','MainController@postCashBook')->name('postCashBook');

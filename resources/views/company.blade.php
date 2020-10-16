@@ -3,7 +3,7 @@
   <h3>Company</h3>
   <p class="text-subtitle text-muted">Company List</p>
 </div>
-
+@csrf
 <a href="{{ route('getAddProfile') }}"><button class="btn btn-primary" style="margin:10px 0px 25px 0px">Add Company Profile</button></a>
 <section class="section">
 	<div class="col-12">
@@ -29,7 +29,10 @@
 	        	<td>{{ $result['city'] }}</td>
 	        	<td>{{ $result['state'] }}</td>
 	        	<td>{{ $result['updated_at'] }}</td>
-	        	<td><a href="{{ route('editProfile',$result['id']) }}"><button class="btn btn-secondary">Edit</button></a></td>
+	        	<td>
+	        		<a href="{{ route('editProfile',$result['id']) }}"><button class="btn btn-primary">Edit</button></a>
+	        		<button class="btn btn-secondary delete" target="{{ $result['id'] }}">Delete</button>
+	        	</td>
 	        </tr>
 	        @endforeach
 	      </tbody>
@@ -40,6 +43,26 @@
 @include('script')
 <script>
 	$("#profile").DataTable();
+
+	$(".delete").click(function(){
+
+		if(confirm('Confirm to delete this company profile ?')){
+			let token = $("input[name=_token]").val();
+			let id = $(this).attr('target');
+
+			$.post('{{ route('ajaxDeleteCompany') }}',
+				{
+					'_token' : token,
+					'id' : id
+				},
+				function(data){
+					console.log(data);
+				},'html');
+
+			window.location.reload();
+		}
+
+	});
 </script>
 @include('footer')
 

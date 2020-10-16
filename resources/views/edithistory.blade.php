@@ -61,6 +61,7 @@
 									<th style="width:12%">Tonnage</th>
 									<th style="width:12%">Price</th>
 									<th style="width:12%">Cost</th>
+									<th style="width:5%"></th>
 									<th style="width:12%">Amount</th>
 								</thead>
 								<tbody id="append">
@@ -86,7 +87,7 @@
 										</td>
 
 										<td>
-											<input type="number" name="total_piece[]" class="form-control" value="{{ $result['total_piece'] }}" readonly>
+											<input type="number" name="total_piece[]" class="form-control t_piece" value="{{ $result['total_piece'] }}" readonly>
 										</td>
 										<td>
 											<input type="text" name="tonnage[]" class="form-control tonnage" value="{{ $result['tonnage'] }}" readonly>
@@ -94,10 +95,14 @@
 										<td>
 											<input style="font-size:18px" type="number" name="price[]" class="form-control price" value="{{ $result['price'] }}" step="0.01" required>
 											<input type="number" name="invoice_detail_id[]" class="form-control" hidden value="{{ $result['id'] }}">
-
 										</td>
 										<td>
 											<input type="number" name="cost[]" class="form-control cost" value="{{$result['cost']}}">
+										</td>
+										<td style="text-align: center">
+											<input type="hidden" name="cal_type[]" value="ton" {{ ($result->cal_type == 1) ? 'disabled' : ''}}/>
+											<input type="checkbox" class="form-check-input cal_type" name="cal_type[]" value="fr"  {{ ($result->cal_type == 1) ? 'checked' : ''}} />
+											<div>Footrun</div>
 										</td>
 										<td>
 											<i class="cross" data-feather="x-circle" style="position:absolute;left:98.5%;height:2rem" data_id="{{$result['id']}}"></i> 
@@ -134,6 +139,12 @@
 										<td>
 											<input type="text" name="cost[]" class="form-control cost" value="Null" readonly>
 										</td>
+										<td style="text-align: center">
+											<input type="hidden" name="cal_type[]" value="ton" />
+											<input type="checkbox" class="form-check-input cal_type" name="cal_type[]" value="fr" />
+											<div>Footrun</div>
+										</td>
+										</td>
 										<td>
 											<i class="cross" data-feather="x-circle" style="position:absolute;left:98.5%;height:2rem" data_id="{{$transport['id']}}"></i> 
 											<input type="text" name="amount[]" class="form-control" readonly val="" value="Null">		
@@ -166,15 +177,11 @@
 		cal2($(this));
 	});
 
+	//Start Here
 	$("#add_p").click(function(){
-		let a = $("#append").children().eq(0).clone().find("input,textarea").val("").end();
+		let count = $("#append").children().length - 1;
+		let a = $("#append").children().eq(count).clone().find(".t_piece,.tonnage,.price,.cost,.amount,textarea").val("").end();
 		$("#append").append(a);
-
-		$(".cross").click(function(){
-	  	let id = $(this).attr('data_id');
-	  	$(this).parents().eq(1).remove();
-	  	$("#hidden_data").append("<input type='text' name='delete_invoice_detail_id[]' value='"+id+"' hidden />");
-  	});
 
 		$(".product").change(function(){
 			$(this).children().attr('selected',false);
@@ -223,6 +230,7 @@
 				}else{
 					num2 = parseFloat(data['second']);
 				}
+				
 				//Piece Filter Start Here
 
 				let total_piece = 0;
@@ -241,7 +249,7 @@
 						total_piece += parseInt(b[0]);
 						ton += parseInt(b[0]) * parseInt(b[1]);
 					});
-				}		
+				}			
 
 				ton = (ton * num1 * num2) / 7200;
 				ton = ton.toFixed(4);
@@ -252,11 +260,61 @@
 				cal3(target2);
 
 			},"json");
-
 		});
 
-	})
+		$(".tonnage").unbind();
+		
+		$(".tonnage").click(function(){
+	  	if($(this).attr("data-ref") == "ton"){
+	  		$(this).css("background-color","#F2F4F4");
+	  		$(this).attr("data-ref","fr")
+	  	}else{
+	  		$(this).css("background-color","#1fed0d");
+	  		$(this).attr("data-ref","ton")
+	  	}
+	  });
 
+		$(".cal_type").unbind();
+		//Checkbox Button
+		$(".cal_type").change(function(){
+			let fr = 0;
+			let price,total;
+
+			if(this.checked){
+				console.log("Yes");
+				$(this).siblings().eq(0).prop("disabled",true);
+
+				price = $(this).parent().eq(0).siblings().eq(5).children().val();
+				fr = $(this).parent().eq(0).siblings().eq(4).children().val();
+				fr = Math.round(fr * 7200);
+				total = price * fr;
+				total = total.toFixed(2);
+
+				let display = new Intl.NumberFormat().format(total);
+
+		 		$(this).parent().eq(0).siblings().eq(7).children().attr('val',total);
+		  	$(this).parent().eq(0).siblings().eq(7).children().val("Rm "+display);
+
+			}else{
+				console.log("No");
+				$(this).siblings().eq(0).prop("disabled",false);
+
+				let ton3 = parseFloat($(this).parents().eq(0).siblings().eq(4).children().val());
+				let price3 = parseFloat($(this).parents().eq(0).siblings().eq(5).children().val());
+
+				let amount3 = price3 * ton3;
+				amount3 = amount3.toFixed(2);
+
+				let display3 = new Intl.NumberFormat().format(amount3);
+
+				$(this).parents().eq(0).siblings().eq(7).children().attr('val',amount3);
+			 	$(this).parents().eq(0).siblings().eq(7).children().val("Rm "+display3);
+			}
+		});
+
+	});
+
+	//End Here
 
 	$(".variation").change(function(){
 		let target = $(this).parents().eq(0).siblings().eq(1).children();
@@ -291,6 +349,7 @@
 			}else{
 				num2 = parseFloat(data['second']);
 			}
+
 			//Piece Filter Start Here
 
 			let total_piece = 0;
@@ -309,17 +368,55 @@
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 				});
-			}		
-				
+			}			
+
 			ton = (ton * num1 * num2) / 7200;
 			ton = ton.toFixed(4);
 			target.parent().eq(0).siblings().eq(3).children().val(ton);
 			target.parent().eq(0).siblings().eq(2).children().val(total_piece);
 
 			cal3(target2);
-
 		},"json");
 	});
+
+
+	//Checkbox Button
+	$(".cal_type").change(function(){
+		let fr = 0;
+		let price,total;
+
+		if(this.checked){
+			console.log("Yes");
+			$(this).siblings().eq(0).prop("disabled",true);
+
+			price = $(this).parent().eq(0).siblings().eq(5).children().val();
+			fr = $(this).parent().eq(0).siblings().eq(4).children().val();
+			fr = Math.round(fr * 7200);
+			total = price * fr;
+			total = total.toFixed(2);
+
+			let display = new Intl.NumberFormat().format(total);
+
+	 		$(this).parent().eq(0).siblings().eq(7).children().attr('val',total);
+	  	$(this).parent().eq(0).siblings().eq(7).children().val("Rm "+display);
+
+		}else{
+			console.log("No");
+			$(this).siblings().eq(0).prop("disabled",false);
+
+			let ton3 = parseFloat($(this).parents().eq(0).siblings().eq(4).children().val());
+			let price3 = parseFloat($(this).parents().eq(0).siblings().eq(5).children().val());
+
+			let amount3 = price3 * ton3;
+			amount3 = amount3.toFixed(2);
+
+			let display3 = new Intl.NumberFormat().format(amount3);
+
+			$(this).parents().eq(0).siblings().eq(7).children().attr('val',amount3);
+		 	$(this).parents().eq(0).siblings().eq(7).children().val("Rm "+display3);
+		}
+	});
+
 
 	function cal1(target){
 
@@ -379,7 +476,7 @@
 					total_piece += parseInt(b[0]);
 					ton += parseInt(b[0]) * parseInt(b[1]);
 				});
-			}		
+			}												
 
 			ton = (ton * num1 * num2) / 7200;
 			ton = ton.toFixed(4);
@@ -392,36 +489,60 @@
 	}
 
 	function cal2(target){
-		let price = parseFloat(target.val());
-	 	let ton = parseFloat(target.parent().eq(0).siblings().eq(4).children().val());
+		let amount = 0;
+		let display;
+		if(target.parent().eq(0).siblings().eq(6).children().eq(1).prop("checked") == false){
 
-	 	let amount = price * ton;
-	 	amount = amount.toFixed(2);
+			let price = parseFloat(target.val());
+		 	let ton = parseFloat(target.parent().eq(0).siblings().eq(4).children().val());
+		 	amount = price * ton;
+		 	amount = amount.toFixed(2);
+		 	display = new Intl.NumberFormat().format(amount);
 
-	 	let display = new Intl.NumberFormat().format(amount);
+		 }else{
 
-	 	target.parent().eq(0).siblings().eq(6).children().attr('val',amount);
-	  target.parent().eq(0).siblings().eq(6).children().val("Rm "+display);
+		 	let price = parseFloat(target.val());
+		 	let ton = parseFloat(target.parent().eq(0).siblings().eq(4).children().val());
+		 	ton = Math.round(ton * 7200);
+		 	amount = price * ton;
+		 	amount = amount.toFixed(2);
+		 	display = new Intl.NumberFormat().format(amount);
+
+		 }
+
+	 	target.parent().eq(0).siblings().eq(7).children().attr('val',amount);
+	  target.parent().eq(0).siblings().eq(7).children().val("Rm "+display);
 	}
 
 
 	function cal3(target){
+		let amount2 = 0;
+		let display2;
+		if(target.parent().eq(0).siblings().eq(6).children().eq(1).prop("checked") == false){
 
+			let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
+			let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
 
+			amount2 = price2 * ton2;
+			amount2 = amount2.toFixed(2);
 
-		let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
-		let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
+			display2 = new Intl.NumberFormat().format(amount2);
 
-		console.log(ton2);
-		console.log(target.parents().eq(0).siblings().eq(4).children());
+		}else{
 
-		let amount2 = price2 * ton2;
-		amount2 = amount2.toFixed(2);
+			let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
+			let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
 
-		let display2 = new Intl.NumberFormat().format(amount2);
+			ton2 = Math.round(ton2*7200);
+			amount2 = price2 * ton2;
+			amount2 = amount2.toFixed(2);
 
-		target.parents().eq(0).siblings().eq(6).children().attr('val',amount2);
-	 	target.parents().eq(0).siblings().eq(6).children().val("Rm "+display2);
+			display2 = new Intl.NumberFormat().format(amount2);
+		}
+
+		target.parents().eq(0).siblings().eq(7).children().attr('val',amount2);
+	 	target.parents().eq(0).siblings().eq(7).children().val("Rm "+display2);
+
 	}
 
 	$(".product").change(function(){
