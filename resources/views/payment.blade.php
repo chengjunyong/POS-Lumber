@@ -55,6 +55,35 @@
 </div>
 
 @include('script')
+<script>
+	$("input[type=submit]").on("click",function(event){
+	  event.preventDefault();
+
+	  let name = $("select option:selected").text();
+	  let amount = $("input[name=amount]").val();
+	  let target = $("input[name=amount]")[0];
+
+	  amount = amount.replace(" ","");
+	  amount = parseFloat(amount);
+	  amount = amount.toFixed(2);
+		amount = new Intl.NumberFormat().format(amount);
+
+		let text = "Please confirm the information below\nCompany Name : "+name+"\nAmount : Rm "+amount;
+
+	  if(amount == "NaN"){
+	  	target.setCustomValidity('Please Fill An Amounts');
+	  }else{
+	  	target.setCustomValidity("");
+	  	if(confirm(text)){
+	  		$("form").submit();
+			}
+	  }
+
+  });
+
+</script>
+
+
 
 @if(session()->has('success'))
 <script>

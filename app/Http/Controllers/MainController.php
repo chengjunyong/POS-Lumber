@@ -261,6 +261,9 @@ class MainController extends Controller
       cashbook::create([
         'company_id' => $request['company_id'],
         'company_name' => $company_name['company_name'],
+        'invoice_id' => $invoice->id,
+        'invoice_code' => $request['invoice_number'],
+        'invoice_date' => $request['date'],
         'type' => 'debit',
         'amount' => $total_amount
       ]);
@@ -397,6 +400,16 @@ class MainController extends Controller
         'company_id' => $request['company_id'],
         'pieces' => $total_piece,
         'tonnage' => $total_tonnage,
+        'amount' => $total_amount
+      ]);
+
+      $company_name = company::where('id',$request['company_id'])->first();
+
+      cashbook::where('invoice_id',$request->invoice_id)->update([
+        'company_id' => $request['company_id'],
+        'company_name' => $company_name['company_name'],
+        'invoice_date' => $request['date'],
+        'type' => 'debit',
         'amount' => $total_amount
       ]);
 
@@ -551,8 +564,24 @@ class MainController extends Controller
 
     public function postCashBook(Request $request)
     {
-      dd($request);
+      $company = company::where('id',$request->id)->first();
 
+      $cashbook = cashbook::where('company_id',$request->id)
+                          ->orderBy('invoice_date')
+                          ->get();
+      $balance = 0;
+      foreach($cashbook as $key => $result){
+        if($result->type == "debit"){
+          $balance += floatval($result->amount);
+          $cashbook[$key]->setAttribute("balance",$balance);
+        }else{
+          $balance -= floatval($result->amount);
+          $cashbook[$key]->setAttribute("balance",$balance);
+        }
+
+      }
+
+      return view("print_cashbook",compact('cashbook','company'));
     }
 
     public function getPayment()
@@ -565,11 +594,17 @@ class MainController extends Controller
 
     public function postIssuePayment(Request $request)
     {
+      $date = getdate();
+      $today = $date['year']."-".$date['mon']."-".$date['mday'];
+
       $company_name = company::where('id',$request->id)->first();
 
       cashbook::create([
         'company_id' => $request->id,
         'company_name' => $company_name['company_name'],
+        'invoice_id' => null,
+        'invoice_code' => null,
+        'invoice_date' => $today,
         'type' => 'credit',
         'amount' => $request->amount
       ]);

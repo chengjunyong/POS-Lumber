@@ -13,7 +13,7 @@
 				<div class="card-body">
 					<h5 align="center">Please Select Company Profile</h5>
 					<div style="text-align: center">
-						<form method="post" action="{{ route('postCashBook') }}" >
+						<form method="post" action="{{ route('postCashBook') }}" target="_blank" >
 							@csrf
 							<select class="form-control" name="id" style="width: 35%;margin: 0 auto;font-size: 15px;margin-bottom: 15px">
 								@foreach($company as $result)

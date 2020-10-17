@@ -61,9 +61,10 @@
 	<div class="header">
 		<span style="font-size: 23px">VEGAVEST TRADING</span><br/>
 		<span>(CA 0088843-X)</span><br/><br/>
-		<span>8 LORONG SERI SETALI 71, JALAN HAJI AHMAD</span><br/>
-		<span>25300 KUANTAN</span><br/>
-		<span>TEL: 012-9213373 FAX: 09-5131891</span><br/>
+		<span>12 LORONG SERI KUANTAN 52</span><br/>
+		<span>JALAN GALING 25250 KUANTAN</span><br/>
+		<span>TEL: 012-9213373 FAX: 09-5366307</span><br/>
+		<span>EMAIL: tfhow@hotmail.com</span><br/>
 	</div>
 
 	<div class="sub_header">

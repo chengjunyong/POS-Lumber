@@ -10,6 +10,9 @@ class cashbook extends Model
     protected $fillable = [
       'company_id',
       'company_name',
+      'invoice_id',
+      'invoice_code',
+      'invoice_date',
       'type',
       'amount',
     ];
