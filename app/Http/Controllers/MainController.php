@@ -14,8 +14,106 @@ use App\cashbook;
 class MainController extends Controller
 {
     public function getIndex(){
+      $current = "index";
+      $first = new \stdClass;
+      $second = new \stdClass;
+      $third = new \stdClass;
+      $fourth = new \stdClass;
 
-    	return view('index')->with("current","index");
+      //First
+      $month_days = cal_days_in_month(CAL_GREGORIAN,date('n'),date('Y'));
+      $total_days = array();
+      for($a=1;$a<=$month_days;$a++){
+        array_push($total_days,$a);
+      }
+      $total_days = implode(",",$total_days);
+
+      $monthly_sales = array();
+      $b = date('Y')."-".date('n')."-";
+      for($a=1;$a<=$month_days;$a++){
+        $c = invoice::where('invoice_date','=',$b.$a)->sum('amount');
+        array_push($monthly_sales,$c);
+      }
+      $total_monthly_sales = 0; 
+      foreach($monthly_sales as $result){
+        $total_monthly_sales += $result;
+      }
+      $monthly_sales = implode(",",$monthly_sales);
+      $first->total_days = $total_days;
+      $first->monthly_sales = $monthly_sales;
+      $first->total_monthly_sales = $total_monthly_sales;
+      //End First
+
+      //Second
+      $year = date("Y");
+      $revenue = array(); 
+      for($a=1;$a<=12;$a++){
+        $b = invoice::whereRaw('YEAR(invoice_date) = "'.$year.'" AND MONTH(invoice_date) = "'.$a.'"')->sum('amount');
+        array_push($revenue,$b);
+      }
+      $total_revenue = 0; 
+      foreach($revenue as $result){
+        $total_revenue += $result;
+      }
+      $revenue = implode(",",$revenue);
+      $second->revenue = $revenue;
+      $second->total_revenue = $total_revenue;
+      //End Second
+
+      //Third
+      $year = date("Y");
+      $order = array();
+      for($a=1;$a<=12;$a++){
+        $b = invoice::whereRaw('YEAR(invoice_date) = "'.$year.'" AND MONTH(invoice_date) = "'.$a.'"')->count('id');
+        array_push($order,$b);
+      }
+      $total_order = 0; 
+      foreach($order as $result){
+        $total_order += $result;
+      }
+      $order = implode(",",$order);
+      $third->order = $order;
+      $third->total_order = $total_order;
+      //End Third
+
+      //Fourth
+      $year = date("Y");
+      $profit = array();
+      for($a=1;$a<=12;$a++){
+        $b = invoice::whereRaw('YEAR(invoice_date) = "'.$year.'" AND MONTH(invoice_date) = "'.$a.'"')->sum('amount');
+        $c = invoice::whereRaw('YEAR(invoice_date) = "'.$year.'" AND MONTH(invoice_date) = "'.$a.'"')->sum('total_cost');
+        $d = $b - $c;
+        array_push($profit,$d);
+      }
+
+      $total_profit = 0;
+      foreach($profit as $result){
+        $total_profit += $result;
+      }
+
+      $profit = implode(",",$profit);
+      $fourth->profit = $profit;
+      $fourth->total_profit = $total_profit;
+      //End Fourth
+
+      $graph = new \stdClass;
+      $last_month_date = date('m', strtotime('-1 month'));
+
+      $this_month = invoice::whereRaw('YEAR(invoice_date) = "'.date("Y").'" AND MONTH(invoice_date) = "'.date("m").'"')->sum('amount');
+      $last_month = invoice::whereRaw('YEAR(invoice_date) = "'.date("Y").'" AND MONTH(invoice_date) = "'.date('m', strtotime('-1 month')).'"')->sum('amount');
+
+      $charge = $this_month / $last_month;
+      if($charge > 1)
+        $graph->type = "+";
+      else
+        $graph->type = "-";
+
+      $graph->charge = $charge * 100;
+      $graph->this_month = $this_month;
+
+
+
+    	return view('index',compact('current','first','second','third','fourth','graph'));
     }
 
     public function getCompany(){
@@ -221,6 +319,15 @@ class MainController extends Controller
       $total_amount = 0;
       $total_tonnage = 0;
       $total_piece = 0;
+      $total_cost = 0;
+
+      for($a=0;$a<$count;$a++){
+        if($request['product_id'][$a] != "transport"){
+          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
+        }else{
+          $total_cost += floatval($request['price'][$a]);
+        }
+      }
 
       for($a=0;$a<$count;$a++){
         if($request['product_id'][$a] != "transport"){
@@ -253,6 +360,7 @@ class MainController extends Controller
         'company_id' => $request['company_id'],
         'pieces' => $total_piece,
         'tonnage' => $total_tonnage,
+        'total_cost' => $total_cost,
         'amount' => $total_amount
       ]);
 
@@ -370,6 +478,15 @@ class MainController extends Controller
       $total_amount = 0;
       $total_tonnage = 0;
       $total_piece = 0;
+      $total_cost = 0;
+
+      for($a=0;$a<$count;$a++){
+        if($request['product_id'][$a] != "transport"){
+          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
+        }else{
+          $total_cost += floatval($request['price'][$a]);
+        }
+      }
 
       for($a=0;$a<$count;$a++){
         if($request['product_id'][$a] != "transport"){
@@ -400,6 +517,7 @@ class MainController extends Controller
         'company_id' => $request['company_id'],
         'pieces' => $total_piece,
         'tonnage' => $total_tonnage,
+        'total_cost' => $total_cost,
         'amount' => $total_amount
       ]);
 

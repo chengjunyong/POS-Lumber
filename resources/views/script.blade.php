@@ -3,7 +3,6 @@
 <script src="assets/js/app.js"></script>
 <script src="assets/vendors/chartjs/Chart.min.js"></script>
 <script src="assets/vendors/apexcharts/apexcharts.min.js"></script>
-<script src="assets/js/pages/dashboard.js"></script>
 <script src="assets/js/main.js"></script>
 <script src="assets/js/jquery.min.js"></script>
 <script src="assets/js/datatables.min.js"></script>

@@ -15,6 +15,7 @@ class invoice extends Model
       'company_id',
       'pieces',
       'tonnage',
+      'total_cost',
       'amount',
       'invoice_date',
     ];
