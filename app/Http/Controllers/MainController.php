@@ -111,9 +111,39 @@ class MainController extends Controller
       $graph->charge = $charge * 100;
       $graph->this_month = $this_month;
 
+      //Ratio Chart
+      $ratio = new \stdClass;
 
+      $this_month_profit = invoice::whereRaw('YEAR(invoice_date) = "'.date("Y").'" AND MONTH(invoice_date) = "'.date("m").'"')->selectRaw('SUM(amount-total_cost) as profit')->first();
+      $last_month_profit = invoice::whereRaw('YEAR(invoice_date) = "'.date("Y").'" AND MONTH(invoice_date) = "'.date('m', strtotime('-1 month')).'"')->selectRaw('SUM(amount-total_cost) as profit')->first();
+      $total_profit = floatval($this_month_profit->profit) - floatval($last_month_profit->profit);
+      $ratio->earn = $this_month_profit->profit;
+      if($total_profit >= 0)
+        $ratio->profit = "+".number_format($total_profit,2);
+      else
+        $ratio->profit = "-".number_format($total_profit,2);
 
-    	return view('index',compact('current','first','second','third','fourth','graph'));
+      $percent = $this_month_profit->profit / $last_month_profit->profit;
+      if($percent > 1)
+        $ratio->type = "+";
+      else
+        $ratio->type = "-";
+
+      $ratio->percent = $percent * 100;
+      //End Ratio
+
+      //Weekly Sales
+      $today = date("Y-m-d");
+      $last_week = date("Y-m-d",strtotime('-1 week'));
+
+      $sales = invoice::join('company','company.id','=','invoice.company_id')
+                        ->where('invoice.invoice_date','>=',$last_week)
+                        ->where('invoice.invoice_date','<=',$today)
+                        ->get();
+
+      //End Weekly Sales
+
+    	return view('index',compact('current','first','second','third','fourth','graph','ratio','sales'));
     }
 
     public function getCompany(){

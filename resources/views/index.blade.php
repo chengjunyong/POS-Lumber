@@ -114,7 +114,7 @@
       </div>
       <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h4 class="card-title">Orders Today</h4>
+          <h4 class="card-title">Weekly Orders</h4>
         </div>
         <div class="card-body px-0 pb-0">
           <div class="table-responsive">
@@ -122,27 +122,30 @@
               <thead>
                 <tr>
                   <th>Company Name</th>
-                  <th>Email</th>
                   <th>Phone</th>
                   <th>City</th>
+                  <th>State</th>
                   <th>Sales</th>
+                  <th>Invoice Date</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Graiden</td>
-                  <td>vehicula.aliquet@gmail.com</td>
-                  <td>09-5387725</td>
-                  <td>Kuantan</td>
-                  <td>Rm 3,900</td>
-                </tr>
-                <tr>
-                  <td>VEM</td>
-                  <td>vem@abc.com</td>
-                  <td>03-5387725</td>
-                  <td>Gambang</td>
-                  <td>Rm 2,400</td>
-                </tr>
+                @if($sales != null)
+                  @foreach($sales as $result)
+                  <tr>
+                    <td>{{$result->company_name}}</td>
+                    <td>{{$result->contact}}</td>
+                    <td>{{$result->city}}</td>
+                    <td>{{$result->state}}</td>
+                    <td>Rm {{number_format($result->amount,2)}}</td>
+                    <td>{{$result->invoice_date}}</td>
+                  </tr>
+                  @endforeach
+                @else
+                  <tr>
+                    <td colspan=6 align="center">No Sales Data</td>
+                  </tr>
+                @endif
               </tbody>
             </table>
           </div>
@@ -152,13 +155,13 @@
     <div class="col-md-4">
       <div class="card ">
         <div class="card-header">
-          <h4>Your Earnings</h4>
+          <h4>Your Profit ({{date("M")}})</h4>
         </div>
         <div class="card-body">
           <div id="radialBars"></div>
           <div class="text-center mb-5">
             <h6>From last month</h6>
-            <h1 class='text-green'>+$2,134</h1>
+            <h1 class='text-green'>Rm {{$ratio->profit}}</h1>
           </div>
         </div>
       </div>
@@ -605,7 +608,7 @@ var myBar = new Chart(ctxBar, {
   }
 });
 var radialBarsOptions = {
-  series: [44, 80, 67],
+  series: [{{$ratio->percent}}],
   chart: {
     height: 350,
     type: "radialBar",
@@ -615,7 +618,7 @@ var radialBarsOptions = {
     palette: "palette1",
     monochrome: {
       enabled: true,
-      color: "#3245D1",
+      color: "{{($ratio->type == "+") ? '#3245D1' : '#FF0000'}}",
       shadeTo: "light",
       shadeIntensity: 0.65,
     },
@@ -628,7 +631,7 @@ var radialBarsOptions = {
           fontSize: "22px",
         },
         value: {
-          fontSize: "2.5rem",
+          fontSize: "1.2rem",
         },
         total: {
           show: true,
@@ -636,14 +639,13 @@ var radialBarsOptions = {
           color: "#25A6F1",
           fontSize: "16px",
           formatter: function(w) {
-            // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
-            return "$4,124";
+            return "Rm {{number_format($ratio->earn,2)}}";
           },
         },
       },
     },
   },
-  labels: ["Apples", "Oranges", "Bananas", "Berries"],
+  labels: ["Earning"],
 };
 var radialBars = new ApexCharts(document.querySelector("#radialBars"), radialBarsOptions);
 radialBars.render();
