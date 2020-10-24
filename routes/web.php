@@ -60,3 +60,15 @@ Route::post('/ajaxDeleteCompany','MainController@ajaxDeleteCompany')->name('ajax
 Route::post('/issuepayment','MainController@postIssuePayment')->name('postIssuePayment');
 
 Route::post('/postcashbook','MainController@postCashBook')->name('postCashBook');
+
+Route::get('/monthlyreport','MainController@getMonthlyReport')->name('getMonthlyReport');
+
+Route::post('/postmonthlyreport','MainController@postMonthlyReport')->name('postMonthlyReport');
+
+Route::get('/specifydatereport','MainController@getSpecifyDateReport')->name('getSpecifyDateReport');
+
+Route::post('/postspecifydatereport','MainController@postSpecifyDateReport')->name('postSpecifyDateReport');
+
+Route::get('/companybasedreort','MainController@getCompanyBasedReport')->name('getCompanyBasedReport');
+
+Route::post('/postcompanybasedreport','MainController@postCompanyBasedReport')->name('postCompanyBasedReport');

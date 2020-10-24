@@ -82,6 +82,15 @@
                 <li>
                     <a href="{{ route('getCashBook') }}">Cashbook</a>
                 </li>
+                <li>
+                    <a href="{{ route('getMonthlyReport') }}">Monthly Report</a>
+                </li>
+                <li>
+                    <a href="{{ route('getSpecifyDateReport') }}">Specify Date Report</a>
+                </li>
+                <li>
+                    <a href="{{ route('getCompanyBasedReport') }}">Company Based Report</a>
+                </li>
               </ul>
             </li> 
 

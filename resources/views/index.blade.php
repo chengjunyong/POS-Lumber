@@ -1,4 +1,22 @@
 @include('header')
+<style>
+  #table1 {
+    padding: 0px 5px 0px 5px;
+  }
+
+  .dataTables_length > label,#table1_info{
+    margin-left: 15px;
+  }
+
+  #table1_paginate,#table1_filter{
+    margin-right: 15px;
+  }
+
+  #table1_paginate{
+    padding-bottom: 15px;
+  }
+
+</style>
 <div class="page-title">
   <h3>Dashboard</h3>
   <p class="text-subtitle text-muted">Statistics</p>
@@ -169,6 +187,7 @@
 </section>
 @include('script')
 <script>
+$("#table1").DataTable();
 
 var chartColors = {
   red: 'rgb(255, 99, 132)',

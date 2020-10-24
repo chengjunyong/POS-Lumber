@@ -25,7 +25,7 @@
 		border-collapse: collapse;
 	}
 
-	thead{
+	thead,tfoot{
 		font-weight: bold;
 		text-align: center;
 		border:2px solid black;
@@ -39,7 +39,7 @@
 	td{
 		padding-top: 5px;
 		padding-bottom: 5px;
-		padding-left: 5px
+		padding-left: 5px;
 		padding-right:5px;
 	}
 
@@ -75,6 +75,13 @@
 						<td style="text-align: right">{{number_format($result->balance,2)}}</td>
 					</tr>
 				@endforeach
+				<tfoot>
+					<tr>
+						<td colspan="2">Total</td>
+						<td style="text-align: right">Rm {{number_format($debit,2)}}</td>
+						<td style="text-align: right">Rm {{number_format($credit,2)}}</td>
+					</tr>
+				</tfoot>
 			</table>
 
 		<div>

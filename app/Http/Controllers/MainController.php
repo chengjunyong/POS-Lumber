@@ -712,24 +712,28 @@ class MainController extends Controller
 
     public function postCashBook(Request $request)
     {
+      $debit = 0;
+      $credit = 0;
       $company = company::where('id',$request->id)->first();
 
       $cashbook = cashbook::where('company_id',$request->id)
                           ->orderBy('invoice_date')
                           ->get();
       $balance = 0;
+
       foreach($cashbook as $key => $result){
         if($result->type == "debit"){
           $balance += floatval($result->amount);
+          $debit += floatval($result->amount);
           $cashbook[$key]->setAttribute("balance",$balance);
         }else{
           $balance -= floatval($result->amount);
+          $credit += floatval($result->amount);
           $cashbook[$key]->setAttribute("balance",$balance);
         }
-
       }
 
-      return view("print_cashbook",compact('cashbook','company'));
+      return view("print_cashbook",compact('cashbook','company','debit','credit'));
     }
 
     public function getPayment()
@@ -759,6 +763,108 @@ class MainController extends Controller
 
 
       return back()->with('success','Payment has been recorded');
+    }
+
+    public function getMonthlyReport(){
+      $current = "report";
+
+      return view('monthly_report',compact('current'));
+    }
+
+    public function postMonthlyReport(Request $request){
+      $total = new \stdClass;
+      $invoice = invoice::join('company','company.id','=','invoice.company_id')
+                          ->whereRaw('MONTH(invoice.invoice_date) = "'.$request->month.'"')
+                          ->orderBy('invoice.invoice_date')
+                          ->get();
+
+      $total_tonnage = 0;
+      $total_amount = 0;
+      $total_cost = 0;
+      $total_profit = 0;
+      foreach($invoice as $result){
+        $total_tonnage += $result->tonnage;
+        $total_amount += $result->amount;
+        $total_cost += $result->total_cost;
+        $total_profit += $result->amount - $result->total_cost;
+      }
+
+      $total->tonnage = $total_tonnage;
+      $total->amount = $total_amount;
+      $total->cost = $total_cost;
+      $total->profit = $total_profit;
+
+      return view('print_monthly_report',compact('invoice','total'));
+    }
+
+    public function getSpecifyDateReport(){
+        $current = "report";
+
+      return view('specify_date_report',compact('current'));
+    }
+
+    public function postSpecifyDateReport(Request $request){
+
+      $total = new \stdClass;
+      $invoice = invoice::join('company','company.id','=','invoice.company_id')
+                          ->whereRaw('invoice.invoice_date >= "'.$request->date_start.'" AND invoice.invoice_date <= "'.$request->date_end.'"')
+                          ->orderBy('invoice.invoice_date')
+                          ->get();
+
+      $total_tonnage = 0;
+      $total_amount = 0;
+      $total_cost = 0;
+      $total_profit = 0;
+      foreach($invoice as $result){
+        $total_tonnage += $result->tonnage;
+        $total_amount += $result->amount;
+        $total_cost += $result->total_cost;
+        $total_profit += $result->amount - $result->total_cost;
+      }
+
+      $total->tonnage = $total_tonnage;
+      $total->amount = $total_amount;
+      $total->cost = $total_cost;
+      $total->profit = $total_profit;
+
+
+      return view('print_specify_date_report',compact('total','invoice'));
+    }
+
+    public function getCompanyBasedReport(){
+
+      $current = "report";
+
+      $company = company::where('active','1')->get();
+
+      return view('company_based_report',compact('current','company'));
+    }
+
+    public function postCompanyBasedReport(Request $request){
+
+      $total = new \stdClass;
+      $invoice = invoice::join('company','company.id','=','invoice.company_id')
+                          ->whereRaw('invoice.invoice_date >= "'.$request->date_start.'" AND invoice.invoice_date <= "'.$request->date_end.'" AND invoice.company_id ='.$request->company_id)
+                          ->orderBy('invoice.invoice_date')
+                          ->get();
+
+      $total_tonnage = 0;
+      $total_amount = 0;
+      $total_cost = 0;
+      $total_profit = 0;
+      foreach($invoice as $result){
+        $total_tonnage += $result->tonnage;
+        $total_amount += $result->amount;
+        $total_cost += $result->total_cost;
+        $total_profit += $result->amount - $result->total_cost;
+      }
+
+      $total->tonnage = $total_tonnage;
+      $total->amount = $total_amount;
+      $total->cost = $total_cost;
+      $total->profit = $total_profit;
+
+      return view('print_company_based_report',compact('total','invoice'));
     }
 
 

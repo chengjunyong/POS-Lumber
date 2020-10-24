@@ -29,7 +29,7 @@
 	        	<td>{{ $result['company_name'] }}</td>
 	        	<td>{{ $result['pieces'] }}</td>
 	        	<td>{{ $result['tonnage'] }}</td>
-	        	<td>Rm {{ $result['amount'] }}</td>
+	        	<td>Rm {{ number_format($result['amount'],2) }}</td>
 	        	<td>{{ $result['created_at'] }}</td>
 	        	<td style="padding: 0px 0px 0px 0px"><a href="{{ route('editHistory',$result['id']) }}"><button class="btn btn-secondary">Edit</button></a></td>
 	        	<td style="padding: 0px 0px 0px 0px"><a href="{{ route('getPrintInvoice',$result['id']) }}" target="_blank"><button class="btn btn-success">Print</button></a></td>
