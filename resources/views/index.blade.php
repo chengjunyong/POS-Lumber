@@ -179,7 +179,7 @@
           <div id="radialBars"></div>
           <div class="text-center mb-5">
             <h6>From last month</h6>
-            <h1 class='text-green'>Rm {{$ratio->profit}}</h1>
+            <h1 class='text-green'>Rm {{$ratio->profit}} </h1>
           </div>
         </div>
       </div>

@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Voler</title>
+  <title>Dashboard - Vegavest</title>
   <link rel="stylesheet" href="assets/css/bootstrap.css">
   <link rel="stylesheet" href="assets/vendors/chartjs/Chart.min.css">
   <link rel="stylesheet" href="assets/vendors/perfect-scrollbar/perfect-scrollbar.css">
   <link rel="stylesheet" href="assets/css/app.css">
   <link rel="stylesheet" href="assets/css/datatables.min.css">
-  <link rel="shortcut icon" href="assets/images/favicon.svg" type="image/x-icon">
+  <link rel="shortcut icon" href="assets/images/icon.png" type="image/x-icon">
 </head>
 <body>
   <div id="app">
     <div id="sidebar" class='active'>
       <div class="sidebar-wrapper active">
         <div class="sidebar-header">
-          <img src="assets/images/logo.svg" alt="" srcset="">
+          <img src="assets/images/logo.png" alt="" srcset="" style="height:1.8rem !important;">
         </div>
         <div class="sidebar-menu">
           <ul class="menu">

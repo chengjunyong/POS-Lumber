@@ -45,12 +45,22 @@
 		padding-bottom: 7%;
 	}
 
+	.footer{
+		position:absolute;
+		bottom:0;
+		font-size:12px;
+		width:97%;
+	}
+
 	@media print{
 		.main{
 			padding-top: 17.5%;
 		}
 		body{
 			margin: 0px 0px 0px 0px;
+		}
+		.footer{
+			width:100%;
 		}
 
 	}
@@ -75,10 +85,30 @@
 				<span>{{ $company->postcode }}</span><span> {{ $company->city }}</span><br/><span> {{ $company->state }}</span>
 			</div>
 			<div style="float:right">
-				<span>NO     : </span><span>{{ $invoice->invoice_code }} </span><br/>
-				<span>D/O NO : {{ $invoice->do_number }} </span><br/>
-				<span>DATE   : {{ $invoice->invoice_date }} </span><br/>
-				<span>TERM   : CASH</span><br/>
+
+				<table>
+					<tr>
+						<td style="padding: 0px 10px 0px 0px"><span>NO </span></td>
+						<td style="padding: 0px 0px 0px 0px"> : </td>
+						<td style="text-align: right;padding: 0px 0px 0px 10px"><span> {{ $invoice->invoice_code }}</span></td>
+					</tr>
+					<tr>
+						<td style="padding: 0px 10px 0px 0px"><span>D/O NO </span></td>
+						<td style="padding: 0px 0px 0px 0px"> : </td>
+						<td style="text-align: right;padding: 0px 0px 0px 10px"><span> {{ $invoice->do_number }}</span></td>
+					</tr>
+					<tr>
+						<td style="padding: 0px 10px 0px 0px"><span>DATE </span></td>
+						<td style="padding: 0px 0px 0px 0px"> : </td>
+						<td style="text-align: right;padding: 0px 0px 0px 10px"><span> {{ $invoice->invoice_date }}</span></td>
+					</tr>
+					<tr>
+						<td style="padding: 0px 10px 0px 0px"><span>TERM </span></td>
+						<td style="padding: 0px 0px 0px 0px"> : </td>
+						<td style="text-align: right;padding: 0px 0px 0px 10px"><span> CASH</span></td>
+					</tr>
+				</table>
+
 			</div>
 	</div>
 
@@ -146,23 +176,37 @@
 						</td>
 						<td></td>
 						<td></td>
-						<td>{{ $transport->price }}</td>
-						<td>{{ $transport->amount }}</td>
+						<td>{{ number_format($transport->price,2) }}</td>
+						<td>{{ number_format($transport->amount,2) }}</td>
 					</tr>
 				@endif
 
 			</tbody>
-			<tfoot style="border-top: 2px solid;border-bottom: 2px solid;">
-				<tr>
-					<td></td>
-					<td style="text-align: center"><b>Total :</b></td>
-					<td style="text-align: center"><b>{{ $sum['piece'] }}</b></td>
-					<td><b>{{ $sum['tonnage'] }}</b></td>
-					<td></td>
-					<td><b>{{ number_format($sum['amount'],2) }}</b></td>
-				</tr>
-			</tfoot>
 		</table>
+
+		<div class="footer">
+			<table style="width:100%;border-top: 2px solid;border-bottom:2px solid">
+				<tr>
+					<td style="width:1%"></td>
+					<td style="text-align: center;width:50%"><b>Total :</b></td>
+					<td style="text-align: center;width:10%"><b>{{ $sum['piece'] }}</b></td>
+					<td style="width:8%"><b>{{ $sum['tonnage'] }}</b></td>
+					<td style="width:7%"></td>
+					<td style="width:5%"><b>{{ number_format($sum['amount'],2) }}</b></td>
+				</tr>
+			</table>
+			<table align="center" style="width:80%;text-align: center;margin-top: 15px">
+				<tr>
+					<td><b>ISSUE BY:</b></td>
+					<td><b>RECEIVED BY:</b></td>
+				</tr>
+				<tr>
+					<td>_______________________________</td>
+					<td>_______________________________</td>
+				</tr>
+			</table>
+		</div>
+
 
 
 	</div>

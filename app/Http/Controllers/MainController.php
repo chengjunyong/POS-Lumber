@@ -121,7 +121,7 @@ class MainController extends Controller
       if($total_profit >= 0)
         $ratio->profit = "+".number_format($total_profit,2);
       else
-        $ratio->profit = "-".number_format($total_profit,2);
+        $ratio->profit = number_format($total_profit,2);
 
       $percent = $this_month_profit->profit / $last_month_profit->profit;
       if($percent > 1)
@@ -733,7 +733,19 @@ class MainController extends Controller
         }
       }
 
-      return view("print_cashbook",compact('cashbook','company','debit','credit'));
+      $month = array();
+      $each = array();
+      $a = 0;
+      for($i=1;$i<=12;$i++){
+        $each[$i] = invoice::whereRaw("MONTH(invoice_date) = '".$i."' AND YEAR(invoice_date) = '".date("Y")."'")->get();
+        foreach($each[$i] as $result){
+          $a += $result->amount;
+        }
+        $month[$i] = $a;
+        $a = 0;
+      }
+
+      return view("print_cashbook",compact('cashbook','company','debit','credit','month'));
     }
 
     public function getPayment()
