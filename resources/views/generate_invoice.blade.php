@@ -34,6 +34,13 @@
 	}
 
 </style>
+<div id="copy" hidden>
+	<select name="variation[]" class="form-control variation">
+		@foreach($variation as $result2)
+				<option value="{{$result2['id']}}">{!!$result2['display']!!}</option>
+		@endforeach
+	</select>
+</div>
 <div class="page-title">
   <h3>Invoice</h3>
   <p class="text-subtitle text-muted">Generate Invoice</p>
@@ -91,6 +98,7 @@
 													<option value="{{$result['id']}}">{{$result['name']}}</option>
 												@endforeach
 													<option value="transport">Transportation</option>
+													<option value="other">Other</option>
 											</select>
 										</td>
 										<td>
@@ -141,6 +149,7 @@
 <script>
 	let num1 = 0;
 	let num2 = 0;
+	var list; 
 
 	$(".pieces").on("keyup click",function(){
 		cal1($(this));
@@ -157,9 +166,24 @@
 		$("#append").append(a);
 
 		$(".product").change(function(){
-			$(this).children().attr('selected',false);
-			$(this).children("option:selected").attr('selected',true);
-
+			if(list == null){
+				list = $("#copy").html();	
+			}
+			if($(this).val() == 'other'){
+				$(this).parents().eq(0).siblings().eq(0).html("<input type='text' name=variation[] class='form-control' required='true'/>");
+				$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+				$(this).parents().eq(0).siblings().eq(2).children().attr({required:true,readonly:false});
+			}else if($(this).val() == 'transport'){
+				$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+				$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+				$(this).parents().eq(0).siblings().eq(0).html(list);
+			}else{
+				$(this).parents().eq(0).siblings().eq(0).html(list);
+				$(this).parents().eq(0).siblings().eq(1).children().attr({required:true,readonly:false,placeholder:"Example: 80/20,15/18"});
+				$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+				$(this).children().attr('selected',false);
+				$(this).children("option:selected").attr('selected',true);
+			}
 		});
 
 		$(".pieces").keyup(function(){
@@ -519,10 +543,26 @@
 	}
 
 	$(".product").change(function(){
-		$(this).children().attr('selected',false);
-		$(this).children("option:selected").attr('selected',true);
+		if(list == null){
+			list = $("#copy").html();	
+		}
+		if($(this).val() == 'other'){
+			$(this).parents().eq(0).siblings().eq(0).html("<input type='text' name=variation[] class='form-control' required='true'/>");
+			$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+			$(this).parents().eq(0).siblings().eq(2).children().attr({required:true,readonly:false});
+		}else if($(this).val() == 'transport'){
+			$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+			$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+			$(this).parents().eq(0).siblings().eq(0).html(list);
+		}else{
+			$(this).parents().eq(0).siblings().eq(0).html(list);
+			$(this).parents().eq(0).siblings().eq(1).children().attr({required:true,readonly:false,placeholder:"Example: 80/20,15/18"});
+			$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+			$(this).children().attr('selected',false);
+			$(this).children("option:selected").attr('selected',true);
+		}
 	});
-
+	
 	var elem = document.documentElement;
   function openFullscreen() {
     if (elem.requestFullscreen) {

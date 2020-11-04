@@ -164,6 +164,25 @@
 					</tr>
 				@endforeach
 
+				@if($other != null)
+					@foreach($other as $result)
+						<tr>
+							<td>{{ $a++ }}</td>
+							<td>
+								<div style="display:grid;grid-template-columns:5% 20% 75%;grid-gap: 10px;">
+									<div>Other</div>
+									<div></div>
+									<div><b>{{$result->product_name}}</b></div>
+								</div>
+							</td>
+							<td style="text-align: center">{{$result->total_piece}}</td>
+							<td></td>
+							<td>{{ number_format($transport->price,2) }}</td>
+							<td>{{ number_format($transport->amount,2) }}</td>
+						</tr>
+					@endforeach
+				@endif
+
 				@if($transport != null)
 					<tr class="last">
 						<td>{{ $a }}</td>

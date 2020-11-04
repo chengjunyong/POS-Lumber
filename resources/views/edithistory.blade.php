@@ -18,6 +18,14 @@
 	}
 
 </style>
+<div id="copy" hidden>
+	<select name="variation[]" class="form-control variation">
+		@foreach($variation as $result2)
+				<option value="{{$result2['id']}}">{!!$result2['display']!!}</option>
+		@endforeach
+	</select>
+</div>
+
 <section class="edit_history"> 
 	<div class="row">
 		<div class="col-md-12 col-12">
@@ -73,6 +81,7 @@
 													<option value="{{$result2['id']}}" {{ ($result['product_name'] == $result2['name']) ? 'selected' : '' }}>{{$result2['name']}}</option>
 												@endforeach
 													<option value="transport">Transportation</option>
+													<option value="other">Other</option>
 											</select>
 										</td>
 										<td>
@@ -111,12 +120,61 @@
 									</tr>
 								@endforeach
 
+								@if($other != null)
+									@foreach($other as $result)
+										<tr>
+											<td>
+												<select name="product_id[]" class="form-control product">
+													@foreach($product as $result2)
+														<option value="{{$result2['id']}}">{{$result2['name']}}</option>
+													@endforeach
+														<option value="transport">Transportation</option>
+														<option value="other" selected>Other</option>
+												</select>
+											</td>
+											<td>
+												<input type="text" name="variation[]" class="form-control variation" value="{{ $result['product_name'] }}" required>
+											</td>
+											<td>
+												<input type="text" class="form-control pieces" name="piece[]" value="Null" readonly>
+											</td>
+											<td>
+												<input type="text" name="total_piece[]" class="form-control" value="{{ $result['total_piece'] }}" required>
+											</td>
+											<td>
+												<input type="text" name="tonnage[]" class="form-control tonnage" value="Null" readonly>
+											</td>
+											<td>
+												<input type="number" name="invoice_detail_id[]" class="form-control" hidden value="{{ $result['id'] }}">
+												<input style="font-size:18px" type="number" name="price[]" class="form-control price" value="{{ $result['price'] }}" step="0.01" required>
+											</td>
+											<td>
+												<input type="text" name="cost[]" class="form-control cost" value="{{ $result['cost'] }}">
+											</td>
+											<td style="text-align: center">
+												<input type="hidden" name="cal_type[]" value="ton" />
+												<input type="checkbox" class="form-check-input cal_type" name="cal_type[]" value="fr" />
+												<div>Footrun</div>
+											</td>
+											</td>
+											<td>
+												<i class="cross" data-feather="x-circle" style="position:absolute;left:98.5%;height:2rem" data_id="{{$result['id']}}"></i> 
+												<input type="text" name="amount[]" class="form-control" readonly val="" value="NaN">		
+											</td>
+										</tr>
+									@endforeach
+								@endif
+
 								@if($transport != null)
 									<tr>
 										<td>
 											<select name="product_id[]" class="form-control product">
-												<option value="transport" selected>Transportation</option>
-											</select>
+													@foreach($product as $result2)
+														<option value="{{$result2['id']}}">{{$result2['name']}}</option>
+													@endforeach
+														<option value="transport" selected>Transportation</option>
+														<option value="other">Other</option>
+												</select>
 										</td>
 										<td>
 											<select name="variation[]" class="form-control variation">
@@ -168,6 +226,7 @@
 <script>
 	let num1 = 0;
 	let num2 = 0;
+	var list;
 
 	$(".pieces").on("keyup click",function(){
 		cal1($(this));
@@ -184,9 +243,24 @@
 		$("#append").append(a);
 
 		$(".product").change(function(){
-			$(this).children().attr('selected',false);
-			$(this).children("option:selected").attr('selected',true);
-
+			if(list == null){
+				list = $("#copy").html();	
+			}
+			if($(this).val() == 'other'){
+				$(this).parents().eq(0).siblings().eq(0).html("<input type='text' name=variation[] class='form-control' required='true'/>");
+				$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+				$(this).parents().eq(0).siblings().eq(2).children().attr({required:true,readonly:false});
+			}else if($(this).val() == 'transport'){
+				$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+				$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+				$(this).parents().eq(0).siblings().eq(0).html(list);
+			}else{
+				$(this).parents().eq(0).siblings().eq(0).html(list);
+				$(this).parents().eq(0).siblings().eq(1).children().attr({required:true,readonly:false,placeholder:"Example: 80/20,15/18"});
+				$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+				$(this).children().attr('selected',false);
+				$(this).children("option:selected").attr('selected',true);
+			}
 		});
 
 		$(".pieces").keyup(function(){
@@ -198,6 +272,7 @@
 		});
 
 		$(".variation").change(function(){
+
 			let target = $(this).parents().eq(0).siblings().eq(1).children();
 			let target2 = $(this);
 			let ton = 0;
@@ -546,8 +621,24 @@
 	}
 
 	$(".product").change(function(){
-		$(this).children().attr('selected',false);
-		$(this).children("option:selected").attr('selected',true);
+		if(list == null){
+			list = $("#copy").html();	
+		}
+		if($(this).val() == 'other'){
+			$(this).parents().eq(0).siblings().eq(0).html("<input type='text' name=variation[] class='form-control' required='true'/>");
+			$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+			$(this).parents().eq(0).siblings().eq(2).children().attr({required:true,readonly:false});
+		}else if($(this).val() == 'transport'){
+			$(this).parents().eq(0).siblings().eq(1).children().attr({required:false,readonly:true,placeholder:""});
+			$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+			$(this).parents().eq(0).siblings().eq(0).html(list);
+		}else{
+			$(this).parents().eq(0).siblings().eq(0).html(list);
+			$(this).parents().eq(0).siblings().eq(1).children().attr({required:true,readonly:false,placeholder:"Example: 80/20,15/18"});
+			$(this).parents().eq(0).siblings().eq(2).children().attr({required:false,readonly:true});
+			$(this).children().attr('selected',false);
+			$(this).children("option:selected").attr('selected',true);
+		}
 	});
 
 	var elem = document.documentElement;

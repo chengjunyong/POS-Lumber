@@ -102,7 +102,14 @@ class MainController extends Controller
       $this_month = invoice::whereRaw('YEAR(invoice_date) = "'.date("Y").'" AND MONTH(invoice_date) = "'.date("m").'"')->sum('amount');
       $last_month = invoice::whereRaw('YEAR(invoice_date) = "'.date("Y").'" AND MONTH(invoice_date) = "'.date('m', strtotime('-1 month')).'"')->sum('amount');
 
-      $charge = $this_month / $last_month;
+      if($last_month == 0){
+        $charge = $this_month / 1;
+      }else{
+        $charge = $this_month / $last_month;
+      }
+
+      
+
       if($charge > 1)
         $graph->type = "+";
       else
@@ -123,7 +130,12 @@ class MainController extends Controller
       else
         $ratio->profit = number_format($total_profit,2);
 
-      $percent = $this_month_profit->profit / $last_month_profit->profit;
+      if($last_month_profit->profit == 0){
+        $percent = $this_month_profit->profit / 1;
+      }else{
+        $percent = $this_month_profit->profit / $last_month_profit->profit;
+      }
+      
       if($percent > 1)
         $ratio->type = "+";
       else
@@ -352,7 +364,7 @@ class MainController extends Controller
       $total_cost = 0;
 
       for($a=0;$a<$count;$a++){
-        if($request['product_id'][$a] != "transport"){
+        if($request['product_id'][$a] != "transport" || $request['product_id'][$a] != "other"){
           $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
         }else{
           $total_cost += floatval($request['price'][$a]);
@@ -360,7 +372,13 @@ class MainController extends Controller
       }
 
       for($a=0;$a<$count;$a++){
-        if($request['product_id'][$a] != "transport"){
+        if($request['product_id'][$a] == "transport"){
+          $total_amount += $request['price'][$a]; 
+
+        }else if($request['product_id'][$a] == "other"){
+          $total_amount += $request['price'][$a]; 
+
+        }else{
           $total_piece += floatval($request['total_piece'][$a]); 
           $total_tonnage += floatval($request['tonnage'][$a]);
 
@@ -369,11 +387,6 @@ class MainController extends Controller
           $tmp = str_replace(",","",$tmp);
           $tmp = floatval($tmp);
           $total_amount += $tmp; 
-
-        }else{
-          
-          $total_amount += $request['price'][$a]; 
-
         }
       }
 
@@ -407,15 +420,52 @@ class MainController extends Controller
       ]);
 
       for($a=0;$a<$count;$a++){
-        $variation = variation::where('id',$request['variation'][$a])->first();
-        if($request['cal_type'][$a] == "fr"){
-          $cal_type = 1;
-        }else{
-          $cal_type = null;
+        if($request['product_id'][$a] != "other"){
+          $variation = variation::where('id',$request['variation'][$a])->first();
+          if($request['cal_type'][$a] == "fr"){
+            $cal_type = 1;
+          }else{
+            $cal_type = null;
+          }
         }
 
+        if($request['product_id'][$a] == "transport"){
 
-        if($request['product_id'][$a] != "transport"){
+          invoice_detail::create([
+            'invoice_id' => $invoice['id'],
+            'product_id' => "Transportation",
+            'product_name' => "Transportation",
+            'variation_id' => null,
+            'variation_display' => null,
+            'piece_col' => null,
+            'total_piece' => null,
+            'price' => $request['price'][$a],
+            'cost' => null,
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+            'cal_type' => null
+          ]);
+          
+        }else if($request['product_id'][$a] == "other"){
+
+          invoice_detail::create([
+            'invoice_id' => $invoice['id'],
+            'product_id' => "Other",
+            'product_name' => $request['variation'][$a],
+            'variation_id' => null,
+            'variation_display' => null,
+            'piece_col' => null,
+            'total_piece' => $request['total_piece'][$a],
+            'price' => $request['price'][$a],
+            'cost' => $request['cost'][$a],
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+            'cal_type' => null
+          ]);
+
+        }else{
 
           $amount = $request['amount'][$a];
           $amount = str_replace("Rm ","",$amount);
@@ -438,27 +488,10 @@ class MainController extends Controller
             'cal_type' => $cal_type
           ]);
 
-        }else{
-
-          invoice_detail::create([
-            'invoice_id' => $invoice['id'],
-            'product_id' => "Transportation",
-            'product_name' => "Transportation",
-            'variation_id' => null,
-            'variation_display' => null,
-            'piece_col' => null,
-            'total_piece' => null,
-            'price' => $request['price'][$a],
-            'cost' => null,
-            'amount' => $request['price'][$a],
-            'tonnage' => null,
-            'footrun' => null,
-            'cal_type' => null
-          ]);
-
         }
 
       }  
+
       return back()->with('success',"success");
     }
 
@@ -490,12 +523,13 @@ class MainController extends Controller
                                 ->get();
 
       $transport = invoice_detail::where([['product_id','LIKE','Transportation'],['invoice_id',$invoice_id]])->first();
+      $other = invoice_detail::where([['product_id','LIKE','Other'],['invoice_id',$invoice_id]])->get();
       $product = product::get();
       $variation = variation::get();
       $company = company::where('active','1')->get();
 
 
-      return view('edithistory',compact('current','detail','invoice','transport','product','variation','company'));
+      return view('edithistory',compact('current','detail','invoice','transport','product','variation','company','other'));
 
     }
 
@@ -511,7 +545,7 @@ class MainController extends Controller
       $total_cost = 0;
 
       for($a=0;$a<$count;$a++){
-        if($request['product_id'][$a] != "transport"){
+        if($request['product_id'][$a] != "transport" || $request['product_id'][$a] != "other"){
           $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
         }else{
           $total_cost += floatval($request['price'][$a]);
@@ -519,18 +553,21 @@ class MainController extends Controller
       }
 
       for($a=0;$a<$count;$a++){
-        if($request['product_id'][$a] != "transport"){
+        if($request['product_id'][$a] == "transport"){
+          $total_amount += $request['price'][$a]; 
+
+        }else if($request['product_id'][$a] == "other"){
+          $total_amount += $request['price'][$a]; 
+
+        }else{
           $total_piece += floatval($request['total_piece'][$a]); 
           $total_tonnage += floatval($request['tonnage'][$a]);
 
           $tmp = $request['amount'][$a];
           $tmp = str_replace("Rm ","",$tmp);
           $tmp = str_replace(",","",$tmp);
-
-          $total_amount += floatval($tmp); 
-
-        }else{
-          $total_amount += floatval($request['price'][$a]);
+          $tmp = floatval($tmp);
+          $total_amount += $tmp; 
         }
       }
 
@@ -563,22 +600,61 @@ class MainController extends Controller
 
       $invoice = $request->invoice_id;
 
-      for($a=0;$a<$count;$a++){ 
-        $variation = variation::where('id',$request['variation'][$a])->first();
-        if($request['cal_type'][$a] == "fr"){
-          $cal_type = 1;
-        }else{
-          $cal_type = null;
+      for($a=0;$a<$count;$a++){
+        if($request['product_id'][$a] != "other"){
+          $variation = variation::where('id',$request['variation'][$a])->first();
+          if($request['cal_type'][$a] == "fr"){
+            $cal_type = 1;
+          }else{
+            $cal_type = null;
+          }
         }
 
-        if($request['product_id'][$a] != "transport"){
+        if($request['product_id'][$a] == "transport"){
+
+          invoice_detail::create([
+            'invoice_id' => $request->invoice_id,
+            'product_id' => "Transportation",
+            'product_name' => "Transportation",
+            'variation_id' => null,
+            'variation_display' => null,
+            'piece_col' => null,
+            'total_piece' => null,
+            'price' => $request['price'][$a],
+            'cost' => null,
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+            'cal_type' => null
+          ]);
+          
+        }else if($request['product_id'][$a] == "other"){
+
+          invoice_detail::create([
+            'invoice_id' => $request->invoice_id,
+            'product_id' => "Other",
+            'product_name' => $request['variation'][$a],
+            'variation_id' => null,
+            'variation_display' => null,
+            'piece_col' => null,
+            'total_piece' => $request['total_piece'][$a],
+            'price' => $request['price'][$a],
+            'cost' => $request['cost'][$a],
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+            'cal_type' => null
+          ]);
+
+        }else{
+
           $amount = $request['amount'][$a];
           $amount = str_replace("Rm ","",$amount);
           $amount = str_replace(",","",$amount);
+          
           $product_name = product::where('id',$request['product_id'][$a])->first();
-
           invoice_detail::create([
-            'invoice_id' => $invoice,
+            'invoice_id' => $request->invoice_id,
             'product_id' => $request['product_id'][$a],
             'product_name' => $product_name['name'],
             'variation_id' => $request['variation'][$a],
@@ -591,23 +667,6 @@ class MainController extends Controller
             'tonnage' => $request['tonnage'][$a],
             'footrun' => $request['tonnage'][$a] * 7200,
             'cal_type' => $cal_type
-          ]);
-
-        }else{
-
-          invoice_detail::create([
-            'invoice_id' => $invoice,
-            'product_id' => "Transportation",
-            'product_name' => "Transportation",
-            'variation_id' => null,
-            'variation_display' => null,
-            'piece_col' => null,
-            'total_piece' => null,
-            'price' => $request['price'][$a],
-            'cost' => null,
-            'amount' => $request['price'][$a],
-            'tonnage' => null,
-            'footrun' => null,
           ]);
 
         }
@@ -694,11 +753,13 @@ class MainController extends Controller
 
       $transport = invoice_detail::where([['product_id','LIKE','Transportation'],['invoice_id',$request->id]])->first(); 
 
+      $other = invoice_detail::where([['product_id','LIKE','Other'],['invoice_id',$request->id]])->get();
+
       $company = company::where('id',$invoice->company_id)->first();
 
       $a=1;
 
-      return view('print_invoice',compact('invoice','invoice_detail','transport','company','a','sum'));
+      return view('print_invoice',compact('invoice','invoice_detail','transport','company','a','sum','other'));
 
     }
 
