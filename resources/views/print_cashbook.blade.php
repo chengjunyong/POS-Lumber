@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Cashbook - {{$company->company_name}}</title>
+	<title>Debtor Report - {{$company->company_name}}</title>
 </head>
 <style type="text/css">
 	body{

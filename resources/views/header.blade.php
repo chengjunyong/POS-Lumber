@@ -71,7 +71,14 @@
                     <a href="{{route('getHistory')}}">History</a>
                 </li>
               </ul>
-            </li> 
+            </li>
+
+            <li class="sidebar-item {{ $current == 'credit_note' ? 'active' : '' }}" >
+              <a href="{{ route('getCreditNote') }}" class='sidebar-link'>
+                <i data-feather="file-minus" width="20"></i> 
+                <span>Credit Note</span>
+              </a>
+            </li>  
 
             <li class="sidebar-item {{ $current == 'report' ? 'active' : '' }} has-sub" >
               <a href="#" class='sidebar-link'>
@@ -80,7 +87,7 @@
               </a>
               <ul class="submenu {{ $current == 'report' ? 'active' : '' }}">
                 <li>
-                    <a href="{{ route('getCashBook') }}">Cashbook</a>
+                    <a href="{{ route('getCashBook') }}">Debtor Report</a>
                 </li>
                 <li>
                     <a href="{{ route('getMonthlyReport') }}">Monthly Report</a>

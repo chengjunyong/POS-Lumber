@@ -10,6 +10,9 @@ use App\variation;
 use App\invoice;
 use App\invoice_detail;
 use App\cashbook;
+use App\credit;
+use App\credit_detail;
+
 
 class MainController extends Controller
 {
@@ -940,6 +943,172 @@ class MainController extends Controller
       return view('print_company_based_report',compact('total','invoice'));
     }
 
+
+    public function getCreditNote(){
+
+      $current = "credit_note";
+      $company = company::where('active','1')->get();
+      $product = product::get();
+      $variation = variation::get();
+
+      $result = credit::latest()->first();
+      $year = date("Y");
+
+      if($result == null){
+        $credit_note_number = "CN".$year."/0001";
+
+      }else if($result['year'] == $year){
+        $index = intval($result['index']) + 1;
+        $index = sprintf("%'.04d", $index);
+        $credit_note_number = "CN".$year."/".$index;
+
+      }else{
+        $credit_note_number = "CN".$year."/0001";
+      }
+
+      return view('credit_note',compact('current','company','product','variation','credit_note_number'));
+    }
+
+    public function postCreditNote(Request $request){
+
+      $count = count($request['product_id']);
+      $total_cost = 0;
+      $total_amount = 0;
+      $total_tonnage = 0;
+      $total_piece = 0;
+      $total_cost = 0;
+
+      for($a=0;$a<$count;$a++){
+        if($request['product_id'][$a] != "transport" || $request['product_id'][$a] != "other"){
+          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
+        }else{
+          $total_cost += floatval($request['price'][$a]);
+        }
+      }
+
+      for($a=0;$a<$count;$a++){
+        if($request['product_id'][$a] == "transport"){
+          $total_amount += $request['price'][$a]; 
+
+        }else if($request['product_id'][$a] == "other"){
+          $total_amount += $request['price'][$a]; 
+
+        }else{
+          $total_piece += floatval($request['total_piece'][$a]); 
+          $total_tonnage += floatval($request['tonnage'][$a]);
+
+          $tmp = $request['amount'][$a];
+          $tmp = str_replace("Rm ","",$tmp);
+          $tmp = str_replace(",","",$tmp);
+          $tmp = floatval($tmp);
+          $total_amount += $tmp; 
+        }
+      }
+
+      $result = explode("/",$request['credit_note_number']);
+      $index = intval($result[1]);
+      $year = str_replace('CN','',$result[0]);
+
+      $credit = credit::create([
+        'credit_note_code' => $request['credit_note_number'],
+        'do_number' => $request['do'],
+        'credit_note_date' => $request['date'],
+        'year' => $year,
+        'index' => $index,
+        'company_id' => $request['company_id'],
+        'pieces' => $total_piece,
+        'tonnage' => $total_tonnage,
+        'total_cost' => $total_cost,
+        'amount' => $total_amount
+      ]);
+
+      $company_name = company::where('id',$request['company_id'])->first();
+
+      cashbook::create([
+        'company_id' => $request['company_id'],
+        'company_name' => $company_name['company_name'],
+        'invoice_id' => $credit->id,
+        'invoice_code' => $request['credit_note_number'],
+        'invoice_date' => $request['date'],
+        'type' => 'credit',
+        'amount' => $total_amount
+      ]);
+
+      for($a=0;$a<$count;$a++){
+        if($request['product_id'][$a] != "other"){
+          $variation = variation::where('id',$request['variation'][$a])->first();
+          if($request['cal_type'][$a] == "fr"){
+            $cal_type = 1;
+          }else{
+            $cal_type = null;
+          }
+        }
+
+        if($request['product_id'][$a] == "transport"){
+
+          credit_detail::create([
+            'credit_note_id' => $credit['id'],
+            'product_id' => "Transportation",
+            'product_name' => "Transportation",
+            'variation_id' => null,
+            'variation_display' => null,
+            'piece_col' => null,
+            'total_piece' => null,
+            'price' => $request['price'][$a],
+            'cost' => null,
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+            'cal_type' => null
+          ]);
+          
+        }else if($request['product_id'][$a] == "other"){
+
+          credit_detail::create([
+            'invoice_id' => $credit['id'],
+            'product_id' => "Other",
+            'product_name' => $request['variation'][$a],
+            'variation_id' => null,
+            'variation_display' => null,
+            'piece_col' => null,
+            'total_piece' => $request['total_piece'][$a],
+            'price' => $request['price'][$a],
+            'cost' => $request['cost'][$a],
+            'amount' => $request['price'][$a],
+            'tonnage' => null,
+            'footrun' => null,
+            'cal_type' => null
+          ]);
+
+        }else{
+
+          $amount = $request['amount'][$a];
+          $amount = str_replace("Rm ","",$amount);
+          $amount = str_replace(",","",$amount);
+          
+          $product_name = product::where('id',$request['product_id'][$a])->first();
+          credit_detail::create([
+            'invoice_id' => $credit['id'],
+            'product_id' => $request['product_id'][$a],
+            'product_name' => $product_name['name'],
+            'variation_id' => $request['variation'][$a],
+            'variation_display' => $variation['display'],
+            'piece_col' => $request['piece'][$a],
+            'total_piece' => $request['total_piece'][$a],
+            'price' => $request['price'][$a],
+            'cost' => $request['cost'][$a],
+            'amount' => $amount,
+            'tonnage' => $request['tonnage'][$a],
+            'footrun' => $request['tonnage'][$a] * 7200,
+            'cal_type' => $cal_type
+          ]);
+
+        }
+
+      }
+
+      return back()->with('success',"success"); 
+    }
 
 }
 

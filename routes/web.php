@@ -72,3 +72,7 @@ Route::post('/postspecifydatereport','MainController@postSpecifyDateReport')->na
 Route::get('/companybasedreort','MainController@getCompanyBasedReport')->name('getCompanyBasedReport');
 
 Route::post('/postcompanybasedreport','MainController@postCompanyBasedReport')->name('postCompanyBasedReport');
+
+Route::get('/creditnote','MainController@getCreditNote')->name('getCreditNote');
+
+Route::post('/postcreditnote','MainController@postCreditNote')->name('postCreditNote');

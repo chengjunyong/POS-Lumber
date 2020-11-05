@@ -1,13 +1,13 @@
 @include('header')
 <div class="page-title">
   <h3>Report</h3>
-  <p class="text-subtitle text-muted">Cashbook</p>
+  <p class="text-subtitle text-muted">Debtor Report</p>
 </div>
 <div class="row">
 	<div class="col-md-12 col-12">
 		<div class="card">
 			<div class="card-header">
-				<h4 style="float:left">Generate Cashbook</h4>
+				<h4 style="float:left">Generate Debtor Report</h4>
 			</div>
 			<div class="card-content">
 				<div class="card-body">
