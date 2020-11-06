@@ -214,14 +214,10 @@
 					<td style="width:5%"><b>{{ number_format($sum['amount'],2) }}</b></td>
 				</tr>
 			</table>
-			<table align="center" style="width:80%;text-align: center;margin-top: 15px">
+			<table align="center" style="width:80%;text-align: left;margin-top: 45px">
 				<tr>
-					<td><b>ISSUE BY:</b></td>
-					<td><b>RECEIVED BY:</b></td>
-				</tr>
-				<tr>
-					<td>_______________________________</td>
-					<td>_______________________________</td>
+					<td><b>ISSUE BY:</b> _____________________________________ </td>
+					<td><b>RECEIVED BY:</b> _____________________________________ </td>
 				</tr>
 			</table>
 		</div>
