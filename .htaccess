@@ -1,5 +1,0 @@
-# Redirect all requests to public folder
-<IfModule mod_rewrite.c>
-RewriteEngine On
-RewriteRule ^(.*)$ public[L]
-</IfModule>

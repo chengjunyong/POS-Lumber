@@ -177,8 +177,8 @@
 							</td>
 							<td style="text-align: center">{{$result->total_piece}}</td>
 							<td></td>
-							<td>{{ number_format($transport->price,2) }}</td>
-							<td>{{ number_format($transport->amount,2) }}</td>
+							<td>{{ number_format($result->price,2) }}</td>
+							<td>{{ number_format($result->amount,2) }}</td>
 						</tr>
 					@endforeach
 				@endif

@@ -367,13 +367,15 @@ class MainController extends Controller
       $total_cost = 0;
 
       for($a=0;$a<$count;$a++){
-        if($request['product_id'][$a] != "transport" || $request['product_id'][$a] != "other"){
-          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
-        }else{
+        if($request['product_id'][$a] == "transport"){
           $total_cost += floatval($request['price'][$a]);
+        }else if($request['product_id'][$a] == "other"){
+          $total_cost += floatval($request['cost'][$a]);
+        }else{
+          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
         }
       }
-
+      
       for($a=0;$a<$count;$a++){
         if($request['product_id'][$a] == "transport"){
           $total_amount += $request['price'][$a]; 
@@ -548,10 +550,12 @@ class MainController extends Controller
       $total_cost = 0;
 
       for($a=0;$a<$count;$a++){
-        if($request['product_id'][$a] != "transport" || $request['product_id'][$a] != "other"){
-          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
-        }else{
+        if($request['product_id'][$a] == "transport"){
           $total_cost += floatval($request['price'][$a]);
+        }else if($request['product_id'][$a] == "other"){
+          $total_cost += floatval($request['cost'][$a]);
+        }else{
+          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
         }
       }
 
@@ -979,10 +983,12 @@ class MainController extends Controller
       $total_cost = 0;
 
       for($a=0;$a<$count;$a++){
-        if($request['product_id'][$a] != "transport" || $request['product_id'][$a] != "other"){
-          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
-        }else{
+        if($request['product_id'][$a] == "transport"){
           $total_cost += floatval($request['price'][$a]);
+        }else if($request['product_id'][$a] == "other"){
+          $total_cost += floatval($request['cost'][$a]);
+        }else{
+          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
         }
       }
 
