@@ -27,7 +27,7 @@
 	        	<td>{{ $result['company_name'] }}</td>
 	        	<td>{{ $result['contact'] }}</td>
 	        	<td>{{ $result['city'] }}</td>
-	        	<td>{{ $result['state'] }}</td>
+	        	<td>{{ ($result['state'] == 'null') ? '' : $result['state']}}</td>
 	        	<td>{{ $result['updated_at'] }}</td>
 	        	<td>
 	        		<a href="{{ route('editProfile',$result['id']) }}"><button class="btn btn-primary">Edit</button></a>

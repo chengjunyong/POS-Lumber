@@ -29,32 +29,33 @@
 							<div class="col-md-6 col-12">
 								<div class="form-group">
 									<label class="title">Contact</label>
-									<input name="contact" class="form-control" type="text" required>
+									<input name="contact" class="form-control" type="text">
 								</div>
 							</div>
 							<div class="col-md-6 col-12">
 								<div class="form-group">
 									<label class="title">City</label>
-									<input name="city" class="form-control" type="text" required>
+									<input name="city" class="form-control" type="text">
 								</div>
 							</div>
 							<div class="col-md-6 col-12">
 								<div class="form-group">
 									<label class="title">Postcode</label>
-									<input name="postcode" class="form-control" type="number" required>
+									<input name="postcode" class="form-control" type="number">
 								</div>
 							</div>
 							<div class="col-md-6 col-12">
 								<div class="form-group">
 									<label class="title">State</label>
-									<select name="state" class="choices form-select" required>
+									<select name="state" class="choices form-select">
+									<option value="null" selecte> </option>
 					  				<option value="Johor">Johor</option>
 					  				<option value="Kedah">Kedah</option>
 					  				<option value="Kelantan">Kelantan</option>
 					  				<option value="Kuala Lumpur">Kuala Lumpur</option>
 					  				<option value="Malacca">Malacca</option>
 					  				<option value="Negeri Sembilan">Negeri Sembilan</option>
-					  				<option value="Pahang" selected>Pahang</option>
+					  				<option value="Pahang">Pahang</option>
 					  				<option value="Penang">Penang</option>
 					  				<option value="Perak">Perak</option>
 					  				<option value="Perlis">Perlis</option>
@@ -68,7 +69,7 @@
 							<div class="col-md-12 col-12">
 								<div class="form-group">
 									<label class="title">Address</label>
-									<textarea name="address" class="form-control" rows="10" required></textarea>
+									<textarea name="address" class="form-control" rows="10"></textarea>
 								</div>
 							</div>
 							<div class="col-md-12 col-12">

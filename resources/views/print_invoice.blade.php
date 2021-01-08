@@ -82,7 +82,7 @@
 			<div style="float:left">
 				<span>{{ $company->company_name }}</span><br/>
 				<span>{{ $company->address }}</span>
-				<span>{{ $company->postcode }}</span><span> {{ $company->city }}</span><br/><span> {{ $company->state }}</span>
+				<span>{{ $company->postcode }}</span><span> {{ $company->city }}</span><br/><span> {{ ($company->state == 'null') ? '' : $company->state }}</span>
 			</div>
 			<div style="float:right">
 

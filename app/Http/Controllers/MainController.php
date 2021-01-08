@@ -177,13 +177,44 @@ class MainController extends Controller
     public function postAddProfile(Request $request){
     	$current = "company";
     	$result = true;
+
+      if($request['address'] === null){
+        $address = "";
+      }else{
+        $address = $request['address'];
+      }
+
+      if($request['contact'] === null){
+        $contact = "";
+      }else{
+        $contact = $request['contact'];
+      }
+
+      if($request['city'] === null){
+        $city = "";
+      }else{
+        $city = $request['city'];
+      }
+
+      if($request['state'] === null){
+        $state = "";
+      }else{
+        $state = $request['state'];
+      }
+
+      if($request['postcode'] === null){
+        $postcode = "";
+      }else{
+        $postcode = $request['postcode'];
+      }
+
     	company::create([
     		'company_name' => $request['company_name'],
-    		'address' => $request['address'],
-    		'contact' => $request['contact'],
-    		'city' => $request['city'],
-    		'state' => $request['state'],
-    		'postcode' => $request['postcode'],
+    		'address' => $address,
+    		'contact' => $contact,
+    		'city' => $city,
+    		'state' => $state,
+    		'postcode' => $postcode,
         'active' => 1,
     	]);
 
