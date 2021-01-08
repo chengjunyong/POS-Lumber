@@ -73,12 +73,12 @@
               </ul>
             </li>
 
-            <li class="sidebar-item {{ $current == 'credit_note' ? 'active' : '' }}" >
+            <!-- <li class="sidebar-item {{ $current == 'credit_note' ? 'active' : '' }}" >
               <a href="{{ route('getCreditNote') }}" class='sidebar-link'>
                 <i data-feather="file-minus" width="20"></i> 
                 <span>Credit Note</span>
               </a>
-            </li>  
+            </li>  --> 
 
             <li class="sidebar-item {{ $current == 'report' ? 'active' : '' }} has-sub" >
               <a href="#" class='sidebar-link'>
