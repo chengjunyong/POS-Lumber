@@ -119,8 +119,8 @@
 				<th style="width:50%;text-align: center;">DESCRIPTION</th>
 				<th style="width:10%;text-align: center">PIECES</th>
 				<th style="width:8%">TONNAGE</th>
-				<th style="width:7%">RATE <br/>(RM)</th>
-				<th style="width:5%">AMOUNT <br/>(RM)</th>
+				<th style="width:7%;text-align: center">RATE <br/>(RM)</th>
+				<th style="width:5%;text-align: right">AMOUNT <br/>(RM)</th>
 			</thead>
 			<tbody style="">
 				@foreach($invoice_detail as $key => $result)
@@ -156,11 +156,11 @@
 							@if($result->cal_type == null)
 							{{ $result->tonnage }}
 							@else
-							{{ round($result->tonnage * 7200) }} (FR)
+							{{ $result->footrun }} (FR)
 							@endif
 						</td>
-						<td>{{ $result->price }}/{{ ($result->cal_type == null) ? 'T' : 'FR' }}</td>
-						<td>{{ number_format($result->amount,2) }}</td>
+						<td style="text-align: center">{{ $result->price }}/{{ ($result->cal_type == null) ? 'T' : 'FR' }}</td>
+						<td style="text-align: right">{{ number_format($result->amount,2) }}</td>
 					</tr>
 				@endforeach
 
@@ -177,8 +177,8 @@
 							</td>
 							<td style="text-align: center">{{$result->total_piece}}</td>
 							<td></td>
-							<td>{{ number_format($result->price,2) }}</td>
-							<td>{{ number_format($result->amount,2) }}</td>
+							<td style="text-align: center">{{ number_format($result->price,2) }}</td>
+							<td style="text-align: right">{{ number_format($result->amount,2) }}</td>
 						</tr>
 					@endforeach
 				@endif
@@ -196,7 +196,7 @@
 						<td></td>
 						<td></td>
 						<td>{{ number_format($transport->price,2) }}</td>
-						<td>{{ number_format($transport->amount,2) }}</td>
+						<td style="text-align: right">{{ number_format($transport->amount,2) }}</td>
 					</tr>
 				@endif
 
@@ -207,17 +207,17 @@
 			<table style="width:100%;border-top: 2px solid;border-bottom:2px solid">
 				<tr>
 					<td style="width:1%"></td>
-					<td style="text-align: center;width:50%"><b>Total :</b></td>
+					<td style="text-align: left;width:50%"><b>Total :</b></td>
 					<td style="text-align: center;width:10%"><b>{{ $sum['piece'] }}</b></td>
 					<td style="width:8%"><b>{{ $sum['tonnage'] }}</b></td>
 					<td style="width:7%"></td>
-					<td style="width:5%"><b>{{ number_format($sum['amount'],2) }}</b></td>
+					<td style="width:5%;text-align: right"><b>{{ number_format($sum['amount'],2) }}</b></td>
 				</tr>
 			</table>
-			<table align="center" style="width:80%;text-align: left;margin-top: 45px">
+			<table align="center" style="width:80%;text-align: left;margin-top: 75px">
 				<tr>
-					<td><b>ISSUE BY:</b> _____________________________________ </td>
-					<td><b>RECEIVED BY:</b> _____________________________________ </td>
+					<td style="text-align: center"><b>ISSUE BY:</b> _____________________________________ </td>
+					<td style="text-align: center"><b>RECEIVED BY:</b> _____________________________________ </td>
 				</tr>
 			</table>
 		</div>

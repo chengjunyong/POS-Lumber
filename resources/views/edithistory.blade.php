@@ -354,14 +354,28 @@
 		$(".cal_type").change(function(){
 			let fr = 0;
 			let price,total;
+			let target = $(this).parents().eq(0).siblings().eq(2).children();
 
 			if(this.checked){
 				console.log("Yes");
 				$(this).siblings().eq(0).prop("disabled",true);
 
+				let total_piece = 0;
+				let c;
+				let fr = 0;
+				c = target.val().replace(/\n/g,",");
+				if(!c.includes(",")){
+						b = c.split('/');
+						fr += parseInt(b[0]) * parseInt(b[1]);
+				}else{
+					let a = c.split(",");
+					a.forEach(function(index){
+						b = index.split('/');
+						fr += parseInt(b[0]) * parseInt(b[1]);
+					});
+				}	
+
 				price = $(this).parent().eq(0).siblings().eq(5).children().val();
-				fr = $(this).parent().eq(0).siblings().eq(4).children().val();
-				fr = Math.round(fr * 7200);
 				total = price * fr;
 				total = total.toFixed(2);
 
@@ -459,14 +473,28 @@
 	$(".cal_type").change(function(){
 		let fr = 0;
 		let price,total;
+		let target = $(this).parents().eq(0).siblings().eq(2).children();
 
 		if(this.checked){
 			console.log("Yes");
 			$(this).siblings().eq(0).prop("disabled",true);
 
+			let total_piece = 0;
+			let c;
+			let fr = 0;
+			c = target.val().replace(/\n/g,",");
+			if(!c.includes(",")){
+					b = c.split('/');
+					fr += parseInt(b[0]) * parseInt(b[1]);
+			}else{
+				let a = c.split(",");
+				a.forEach(function(index){
+					b = index.split('/');
+					fr += parseInt(b[0]) * parseInt(b[1]);
+				});
+			}	
+
 			price = $(this).parent().eq(0).siblings().eq(5).children().val();
-			fr = $(this).parent().eq(0).siblings().eq(4).children().val();
-			fr = Math.round(fr * 7200);
 			total = price * fr;
 			total = total.toFixed(2);
 
@@ -577,8 +605,21 @@
 		 }else{
 
 		 	let price = parseFloat(target.val());
-		 	let ton = parseFloat(target.parent().eq(0).siblings().eq(4).children().val());
-		 	ton = Math.round(ton * 7200);
+		 	let piece = target.parent().eq(0).siblings().eq(2).children().val();
+			let c,ton=0;
+
+			c = piece.replace(/\n/g,",");
+
+			if(!c.includes(",")){
+					b = c.split('/');
+					ton += parseInt(b[0]) * parseInt(b[1]);
+			}else{
+				let a = c.split(",");
+				a.forEach(function(index){
+					b = index.split('/');
+					ton += parseInt(b[0]) * parseInt(b[1]);
+				});
+			}	
 		 	amount = price * ton;
 		 	amount = amount.toFixed(2);
 		 	display = new Intl.NumberFormat().format(amount);
@@ -605,10 +646,22 @@
 
 		}else{
 
-			let ton2 = parseFloat(target.parents().eq(0).siblings().eq(3).children().val());
 			let price2 = parseFloat(target.parents().eq(0).siblings().eq(4).children().val());
+			let piece = target.parent().eq(0).siblings().eq(1).children().val();
+			let c,ton2=0;
+			c = piece.replace(/\n/g,",");
 
-			ton2 = Math.round(ton2*7200);
+			if(!c.includes(",")){
+					b = c.split('/');
+					ton2 += parseInt(b[0]) * parseInt(b[1]);
+			}else{
+				let a = c.split(",");
+				a.forEach(function(index){
+					b = index.split('/');
+					ton2 += parseInt(b[0]) * parseInt(b[1]);
+				});
+			}	
+			
 			amount2 = price2 * ton2;
 			amount2 = amount2.toFixed(2);
 

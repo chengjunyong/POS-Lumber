@@ -506,6 +506,21 @@ class MainController extends Controller
           $amount = $request['amount'][$a];
           $amount = str_replace("Rm ","",$amount);
           $amount = str_replace(",","",$amount);
+
+          $ton = 0;
+          $fr = preg_replace("/[^0-9\/]/",",",$request['piece'][$a]);
+          $fr = str_replace(",,",",",$fr);
+
+          if(!str_contains($fr,',')){
+            $b = explode("/",$fr);
+            $ton += intval($b[0]) * intval($b[1]);
+          }else{
+            $array = explode(",",$fr);
+            foreach($array as $result){
+              $b = explode("/",$result);
+              $ton += intval($b[0]) * intval($b[1]); 
+            }
+          }
           
           $product_name = product::where('id',$request['product_id'][$a])->first();
           invoice_detail::create([
@@ -520,7 +535,7 @@ class MainController extends Controller
             'cost' => $request['cost'][$a],
             'amount' => $amount,
             'tonnage' => $request['tonnage'][$a],
-            'footrun' => $request['tonnage'][$a] * 7200,
+            'footrun' => $ton,
             'cal_type' => $cal_type
           ]);
 
@@ -689,6 +704,21 @@ class MainController extends Controller
           $amount = $request['amount'][$a];
           $amount = str_replace("Rm ","",$amount);
           $amount = str_replace(",","",$amount);
+
+          $ton = 0;
+          $fr = preg_replace("/[^0-9\/]/",",",$request['piece'][$a]);
+          $fr = str_replace(",,",",",$fr);
+
+          if(!str_contains($fr,',')){
+            $b = explode("/",$fr);
+            $ton += intval($b[0]) * intval($b[1]);
+          }else{
+            $array = explode(",",$fr);
+            foreach($array as $result){
+              $b = explode("/",$result);
+              $ton += intval($b[0]) * intval($b[1]); 
+            }
+          }
           
           $product_name = product::where('id',$request['product_id'][$a])->first();
           invoice_detail::create([
@@ -703,7 +733,7 @@ class MainController extends Controller
             'cost' => $request['cost'][$a],
             'amount' => $amount,
             'tonnage' => $request['tonnage'][$a],
-            'footrun' => $request['tonnage'][$a] * 7200,
+            'footrun' => $ton,
             'cal_type' => $cal_type
           ]);
 
