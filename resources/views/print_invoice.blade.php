@@ -70,7 +70,7 @@
 
 	<div class="header">
 		<span style="font-size: 23px">VEGAVEST TRADING</span><br/>
-		<span>(CA 0088843-X)</span><br/><br/>
+		<span>(CA 0088843-X)</span><br/>
 		<span>12 LORONG SERI KUANTAN 52</span><br/>
 		<span>JALAN GALING 25250 KUANTAN</span><br/>
 		<span>TEL: 012-9213373 FAX: 09-5366307</span><br/>
@@ -117,9 +117,9 @@
 			<thead style="margin-bottom: 10px;border-top: 2px solid;border-bottom:2px solid">
 				<th style="width:1%">NO</th>
 				<th style="width:50%;text-align: center;">DESCRIPTION</th>
-				<th style="width:10%;text-align: center">PIECES</th>
-				<th style="width:8%">TONNAGE</th>
-				<th style="width:7%;text-align: center">RATE <br/>(RM)</th>
+				<th style="width:10%;text-align: right;padding-right: 2%">PIECES</th>
+				<th style="width:8%;text-align: right;padding-right: 2%">TONNAGE</th>
+				<th style="width:7%;text-align: right;padding-right: 2%">RATE <br/>(RM)</th>
 				<th style="width:5%;text-align: right">AMOUNT <br/>(RM)</th>
 			</thead>
 			<tbody style="">
@@ -129,9 +129,9 @@
 						<td>
 							<div style="display:grid;grid-template-columns:5% 20% 75%;grid-gap: 10px;">
 								<div>{{$result->product_name}}</div>
-								<div>{!!$result->variation_display!!}</div>
+								<div>&nbsp;&nbsp;&nbsp;{!!$result->variation_display!!}</div>
+								<!-- Description -->
 								<div>
-									<b>
 										@if($result->bundle == 1)
 											@foreach($result->bundle_col as $output)
 												{!! str_replace(',',' ',$output) !!}<br/>
@@ -139,11 +139,12 @@
 										@else
 											{!! str_replace(',',' ',$result->piece_col) !!}
 										@endif
-									</b>
 								</div>
 							</div>
 						</td>
-						<td style="text-align: center">
+
+						<!-- Piece Output -->
+						<td style="text-align: right;padding-right: 2%">
 							@if($result->bundle == 1)
 									@foreach($result->bundle_piece as $output)
 										{!! $output !!}
@@ -152,14 +153,17 @@
 								{!! $result->total_piece !!}
 							@endif
 						</td>
-						<td>
+
+						<!-- Tonnage Or Footrun Output -->
+						<td style="text-align: right;padding-right: 2%">
 							@if($result->cal_type == null)
-							{{ $result->tonnage }}
+							{{ number_format($result->tonnage,4) }}
 							@else
 							{{ $result->footrun }} (FR)
 							@endif
 						</td>
-						<td style="text-align: center">{{ $result->price }}/{{ ($result->cal_type == null) ? 'T' : 'FR' }}</td>
+
+						<td style="text-align: right;padding-right: 2%">{{ $result->price }}/{{ ($result->cal_type == null) ? 'T' : 'FR' }}</td>
 						<td style="text-align: right">{{ number_format($result->amount,2) }}</td>
 					</tr>
 				@endforeach
@@ -172,12 +176,19 @@
 								<div style="display:grid;grid-template-columns:5% 20% 75%;grid-gap: 10px;">
 									<div>Other</div>
 									<div></div>
-									<div><b>{{$result->product_name}}</b></div>
+									<div>{{$result->product_name}}</div>
 								</div>
 							</td>
-							<td style="text-align: center">{{$result->total_piece}}</td>
+							<td style="text-align: right;padding-right: 2%">{{$result->total_piece}}</td>
 							<td></td>
-							<td style="text-align: center">{{ number_format($result->price,2) }}</td>
+							<td style="text-align: right;padding-right: 2%">
+								@php
+									if($result->total_piece != 0){
+										$rate = $result->amount / $result->total_piece;
+										echo number_format($rate,2);
+									}
+								@endphp
+							</td>
 							<td style="text-align: right">{{ number_format($result->amount,2) }}</td>
 						</tr>
 					@endforeach
@@ -195,7 +206,7 @@
 						</td>
 						<td></td>
 						<td></td>
-						<td>{{ number_format($transport->price,2) }}</td>
+						<td style="text-align: right;padding-right: 2%">{{ number_format($transport->price,2) }}</td>
 						<td style="text-align: right">{{ number_format($transport->amount,2) }}</td>
 					</tr>
 				@endif
@@ -214,10 +225,10 @@
 					<td style="width:5%;text-align: right"><b>{{ number_format($sum['amount'],2) }}</b></td>
 				</tr>
 			</table>
-			<table align="center" style="width:80%;text-align: left;margin-top: 75px">
+			<table align="center" style="width:100%;text-align: left;margin-top: 75px">
 				<tr>
-					<td style="text-align: center"><b>ISSUE BY:</b> _____________________________________ </td>
-					<td style="text-align: center"><b>RECEIVED BY:</b> _____________________________________ </td>
+					<td><b>ISSUE BY:</b> _____________________________________ </td>
+					<td><b>RECEIVED BY:</b> _____________________________________ </td>
 				</tr>
 			</table>
 		</div>

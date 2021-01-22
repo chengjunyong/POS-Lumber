@@ -145,8 +145,8 @@
 												<input type="text" name="tonnage[]" class="form-control tonnage" value="Null" readonly>
 											</td>
 											<td>
-												<input type="number" name="invoice_detail_id[]" class="form-control" hidden value="{{ $result['id'] }}">
 												<input style="font-size:18px" type="number" name="price[]" class="form-control price" value="{{ $result['price'] }}" step="0.01" required>
+												<input type="number" name="invoice_detail_id[]" class="form-control" hidden value="{{ $result['id'] }}">
 											</td>
 											<td>
 												<input type="text" name="cost[]" class="form-control cost" value="{{ $result['cost'] }}">
@@ -238,6 +238,7 @@
 
 	//Start Here
 	$("#add_p").click(function(){
+		$(".cal_type").unbind();
 		let count = $("#append").children().length - 1;
 		let a = $("#append").children().eq(count).clone().find(".t_piece,.tonnage,.price,.cost,.amount,textarea").val("").end();
 		$("#append").append(a);
@@ -349,7 +350,7 @@
 	  	}
 	  });
 
-		$(".cal_type").unbind();
+		
 		//Checkbox Button
 		$(".cal_type").change(function(){
 			let fr = 0;
@@ -357,7 +358,7 @@
 			let target = $(this).parents().eq(0).siblings().eq(2).children();
 
 			if(this.checked){
-				console.log("Yes");
+				console.log("Yes 1");
 				$(this).siblings().eq(0).prop("disabled",true);
 
 				let total_piece = 0;
@@ -375,7 +376,8 @@
 					});
 				}	
 
-				price = $(this).parent().eq(0).siblings().eq(5).children().val();
+				price = $(this).parent().eq(0).siblings().eq(5).children().eq(0).val();
+				console.log($(this).parent().eq(0).siblings().eq(5).children());
 				total = price * fr;
 				total = total.toFixed(2);
 
@@ -385,7 +387,7 @@
 		  	$(this).parent().eq(0).siblings().eq(7).children().val("Rm "+display);
 
 			}else{
-				console.log("No");
+				console.log("No 1");
 				$(this).siblings().eq(0).prop("disabled",false);
 
 				let ton3 = parseFloat($(this).parents().eq(0).siblings().eq(4).children().val());
@@ -476,7 +478,7 @@
 		let target = $(this).parents().eq(0).siblings().eq(2).children();
 
 		if(this.checked){
-			console.log("Yes");
+			console.log("Yes 2");
 			$(this).siblings().eq(0).prop("disabled",true);
 
 			let total_piece = 0;
@@ -494,9 +496,11 @@
 				});
 			}	
 
-			price = $(this).parent().eq(0).siblings().eq(5).children().val();
+			price = $(this).parent().eq(0).siblings().eq(5).children().eq(0).val();
 			total = price * fr;
 			total = total.toFixed(2);
+
+			console.log(`Price -> ${price} , FR -> ${fr}`);
 
 			let display = new Intl.NumberFormat().format(total);
 

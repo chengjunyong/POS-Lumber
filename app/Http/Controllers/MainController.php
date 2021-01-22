@@ -89,6 +89,9 @@ class MainController extends Controller
         array_push($profit,$d);
       }
 
+
+      dd($profit);
+
       $total_profit = 0;
       foreach($profit as $result){
         $total_profit += $result;
@@ -110,8 +113,6 @@ class MainController extends Controller
       }else{
         $charge = $this_month / $last_month;
       }
-
-      
 
       if($charge > 1)
         $graph->type = "+";
@@ -403,7 +404,22 @@ class MainController extends Controller
         }else if($request['product_id'][$a] == "other"){
           $total_cost += floatval($request['cost'][$a]);
         }else{
-          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
+          if($request->cal_type[$a] != "fr"){
+            $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
+          }else{
+            $target = preg_replace("/[^0-9\/]/",",",$request['piece'][$a]);
+            $target = str_replace(",,",",",$target);
+            if(!str_contains($target,',')){
+              $b = explode("/",$target);
+              $total_cost += (intval($b[0]) * intval($b[1])) * $request->cost[$a];
+            }else{
+              $array = explode(",",$target);
+              foreach($array as $result){
+                $b = explode("/",$result);
+                $total_cost += (intval($b[0]) * intval($b[1])) * $request->cost[$a]; 
+              }
+            }
+          }
         }
       }
       
@@ -757,7 +773,6 @@ class MainController extends Controller
                                 ->join('product','invoice_detail.product_id','=','product.id')
                                 ->where('invoice_detail.invoice_id',$request->id)
                                 ->select('invoice_detail.*')
-                                ->orderBy('name','asc') 
                                 ->get();
 
       $piece = array();
@@ -804,19 +819,22 @@ class MainController extends Controller
 
           $invoice_detail[$key]->setAttribute("bundle_piece",$bundle_piece);
           $invoice_detail[$key]->setAttribute("bundle_col",$bundle_col);
+          unset($bundle_col,$bundle_piece);
+          $bundle_col = array();
+          $bundle_piece = array();
 
         }else{
-
           $invoice_detail[$key]->setAttribute("bundle_col",null);
           $invoice_detail[$key]->setAttribute("bundle",0);
+          unset($bundle_col,$bundle_piece);
+          $bundle_col = array();
+          $bundle_piece = array();
         }
       }
 
       $sum = array();
       $sum['piece'] = invoice_detail::where('invoice_id',$request->id)->sum('total_piece');
-
       $sum['tonnage'] = invoice_detail::where('invoice_id',$request->id)->where('cal_type',null)->sum('tonnage');
-
       $sum['amount'] = invoice_detail::where('invoice_id',$request->id)->sum('amount');
 
       $transport = invoice_detail::where([['product_id','LIKE','Transportation'],['invoice_id',$request->id]])->first(); 
@@ -828,7 +846,6 @@ class MainController extends Controller
       $a=1;
 
       return view('print_invoice',compact('invoice','invoice_detail','transport','company','a','sum','other'));
-
     }
 
     public function getCashBook()
