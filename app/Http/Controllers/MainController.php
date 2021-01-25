@@ -89,9 +89,6 @@ class MainController extends Controller
         array_push($profit,$d);
       }
 
-
-      dd($profit);
-
       $total_profit = 0;
       foreach($profit as $result){
         $total_profit += $result;
@@ -617,7 +614,22 @@ class MainController extends Controller
         }else if($request['product_id'][$a] == "other"){
           $total_cost += floatval($request['cost'][$a]);
         }else{
-          $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
+          if($request->cal_type[$a] != "fr"){
+            $total_cost += floatval($request['tonnage'][$a]) * floatval($request['cost'][$a]); 
+          }else{
+            $target = preg_replace("/[^0-9\/]/",",",$request['piece'][$a]);
+            $target = str_replace(",,",",",$target);
+            if(!str_contains($target,',')){
+              $b = explode("/",$target);
+              $total_cost += (intval($b[0]) * intval($b[1])) * $request->cost[$a];
+            }else{
+              $array = explode(",",$target);
+              foreach($array as $result){
+                $b = explode("/",$result);
+                $total_cost += (intval($b[0]) * intval($b[1])) * $request->cost[$a]; 
+              }
+            }
+          }
         }
       }
 
