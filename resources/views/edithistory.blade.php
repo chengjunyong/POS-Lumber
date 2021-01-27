@@ -106,7 +106,7 @@
 											<input type="number" name="invoice_detail_id[]" class="form-control" hidden value="{{ $result['id'] }}">
 										</td>
 										<td>
-											<input type="number" name="cost[]" class="form-control cost" value="{{$result['cost']}}">
+											<input type="number" name="cost[]" class="form-control cost" value="{{$result['cost']}}" step="0.01">
 										</td>
 										<td style="text-align: center">
 											<input type="hidden" name="cal_type[]" value="ton" {{ ($result->cal_type == 1) ? 'disabled' : ''}}/>
