@@ -78,11 +78,11 @@
 	</div>
 
 	<div class="sub_header">
-		<h3 align="center" style="color:black">INVOICE</h3>
+		<h3 align="center" style="color:black;margin-top: -20px !important">INVOICE</h3>
 			<div style="float:left">
 				<span>{{ $company->company_name }}</span><br/>
-				<span>{{ $company->address }}</span>
-				<span>{{ $company->postcode }}</span><span> {{ $company->city }}</span><br/><span> {{ ($company->state == 'null') ? '' : $company->state }}</span>
+				<span>{{ $company->address }}</span><br/>
+				<span>{{ $company->postcode }}</span><span> {{ $company->city }}</span><span> {{ ($company->state == 'null') ? '' : $company->state }}</span>
 			</div>
 			<div style="float:right">
 
