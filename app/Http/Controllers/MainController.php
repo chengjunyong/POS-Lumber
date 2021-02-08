@@ -893,14 +893,22 @@ class MainController extends Controller
 
       $month = array();
       $each = array();
+      $payment = array();
       $a = 0;
+      $b = 0;
       for($i=1;$i<=12;$i++){
-        $each[$i] = invoice::whereRaw("MONTH(invoice_date) = '".$i."' AND YEAR(invoice_date) = '".date("Y")."'")->get();
+        $each[$i] = invoice::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = '".$i."' AND YEAR(invoice_date) = '".date("Y")."'")->get();
+        $payment[$i] = cashbook::whereRaw("company_id = '".$request->id."' AND type = 'credit' AND MONTH(invoice_date) = '".$i."' AND YEAR(invoice_date) = '".date("Y")."'")->get();
         foreach($each[$i] as $result){
           $a += $result->amount;
         }
-        $month[$i] = $a;
+        foreach($payment[$i] as $result){
+          $b += $result->amount;
+        }
+
+        $month[$i] = $a - $b;
         $a = 0;
+        $b = 0;
       }
 
       return view("print_cashbook",compact('cashbook','company','debit','credit','month'));
