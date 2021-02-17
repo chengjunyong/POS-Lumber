@@ -53,7 +53,7 @@
 		text-align: center;
 		border: 2px solid black;
 		margin-top: 20px;
-		position: absolute;
+		position: relative;
 		bottom:3px;
 		width:93%;
 
