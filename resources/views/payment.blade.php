@@ -41,6 +41,8 @@
 									<option value="{{$result->id}}">{{ $result->company_name }}</option>
 								@endforeach
 							</select>
+							<h5 style="margin-top: 15px" >Issue Date</h5>
+							<input type="date" class="form-control" name="issue_date" style="width:30%;margin: 0 auto;margin-bottom: 15px" required>
 							<h5 style="margin-top: 15px" >Payment Amount</h5>
 							<input type="number" name="amount" step="0.01" class="form-control" style="width:30%;margin: 0 auto;margin-bottom: 15px" required>
 							<br/>
@@ -61,6 +63,7 @@
 
 	  let name = $("select option:selected").text();
 	  let amount = $("input[name=amount]").val();
+	  let issue_date = $("input[name=issue_date]").val();
 	  let target = $("input[name=amount]")[0];
 
 	  amount = amount.replace(" ","");
@@ -68,7 +71,7 @@
 	  amount = amount.toFixed(2);
 		amount = new Intl.NumberFormat().format(amount);
 
-		let text = "Please confirm the information below\nCompany Name : "+name+"\nAmount : Rm "+amount;
+		let text = "Please confirm the information below\nCompany Name : "+name+"\nIssue Date : "+issue_date+"\nAmount : Rm "+amount;
 
 	  if(amount == "NaN"){
 	  	target.setCustomValidity('Please Fill An Amounts');

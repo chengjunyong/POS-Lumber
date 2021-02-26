@@ -870,13 +870,20 @@ class MainController extends Controller
 
     public function postCashBook(Request $request)
     {
+      //Main Part
       $debit = 0;
       $credit = 0;
       $company = company::where('id',$request->id)->first();
 
-      $cashbook = cashbook::where('company_id',$request->id)
+      if($request->issue_month == "all"){
+        $cashbook = cashbook::where('company_id',$request->id)
                           ->orderBy('invoice_date')
                           ->get();
+      }else{
+        $cashbook = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = ".$request->issue_month)
+                          ->orderBy('invoice_date')
+                          ->get();
+      }
       $balance = 0;
 
       foreach($cashbook as $key => $result){
@@ -891,6 +898,8 @@ class MainController extends Controller
         }
       }
 
+      //Part Footer
+      $current_total = 0;
       $month = array();
       $each = array();
       $payment = array();
@@ -909,9 +918,10 @@ class MainController extends Controller
         $month[$i] = $a - $b;
         $a = 0;
         $b = 0;
+        $current_total += $month[$i];
       }
 
-      return view("print_cashbook",compact('cashbook','company','debit','credit','month'));
+      return view("print_cashbook",compact('cashbook','company','debit','credit','month','current_total'));
     }
 
     public function getPayment()
@@ -924,8 +934,8 @@ class MainController extends Controller
 
     public function postIssuePayment(Request $request)
     {
-      $date = getdate();
-      $today = $date['year']."-".$date['mon']."-".$date['mday'];
+      // $date = getdate();
+      // $today = $date['year']."-".$date['mon']."-".$date['mday'];
 
       $company_name = company::where('id',$request->id)->first();
 
@@ -934,7 +944,7 @@ class MainController extends Controller
         'company_name' => $company_name['company_name'],
         'invoice_id' => null,
         'invoice_code' => null,
-        'invoice_date' => $today,
+        'invoice_date' => $request->issue_date,
         'type' => 'credit',
         'amount' => $request->amount
       ]);

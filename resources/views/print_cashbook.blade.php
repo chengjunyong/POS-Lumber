@@ -55,7 +55,7 @@
 		margin-top: 20px;
 		position: relative;
 		bottom:3px;
-		width:93%;
+		width:100%;
 
 	}
 
@@ -131,6 +131,9 @@
 					<td>October<br/>{{ number_format($month[10],2) }}</td>
 					<td>November<br/>{{ number_format($month[11],2) }}</td>
 					<td>December<br/>{{ number_format($month[12],2) }}</td>
+				</tr>
+				<tr>
+					<td colspan="6" style="text-align: center">Current Total Balance : Rm {{number_format($current_total,2)}}</td>
 				</tr>
 			</table>
 
