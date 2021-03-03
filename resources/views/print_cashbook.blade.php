@@ -66,32 +66,44 @@
 		text-align: right;
 	}
 
-	h3,h5{
+	h5{
 		margin:0;
 		color:black;
+		font-size:15px;
 	}
 
 </style>
 <body>
 	<div class="frame">
 		<div class="inner">
-			<h3 align="center">VEGAVEST TRADING</h3>
-			<h3 align="center">(CA 0088843-X)</h3>
-			<h5 align="center">12 LORONG SERI KUANTAN 52</h4>
-			<h5 align="center">JALAN GALING 25250 KUANTAN</h4>
-			<h5 align="center">TEL: 012-9213373 FAX: 09-5366307</h4>
-			<h5 align="center">EMAIL: tfhow@hotmail.com</h4>
-			<h4 style="margin-top: 25px;color: black;">STATEMENT OF ACCOUNTS - {{$company->company_name}}</h3>
+			<h5 align="center">VEGAVEST TRADING</h5>
+			<h5 align="center">(CA 0088843-X)</h5>
+			<h5 align="center">12 LORONG SERI KUANTAN 52</h5>
+			<h5 align="center">JALAN GALING 25250 KUANTAN</h5>
+			<h5 align="center">TEL: 012-9213373 FAX: 09-5366307</h5>
+			<h5 align="center">EMAIL: tfhow@hotmail.com</h5>
+			<h5 style="margin-top: 25px;color: black;">STATEMENT OF ACCOUNTS - {{$company->company_name}}</h5>
 
 			<table>
 				<thead>
 					<th>Date</th>
 					<th>Particular</th>
-					<th>Debit</th>
-					<th>Credit</th>
+					<th style="width:15%">Debit</th>
+					<th style="width:15%">Credit</th>
 					<th>Balance</th>
 				</thead>
-				@foreach($cashbook as $result)
+
+				@if($forward->type != null && $forward->type == "forward" && $forward->balance != 0)
+					<tr>
+						<td style="text-align: center">2021-{{ (strlen($forward->month) == 1) ? '0'.$forward->month : $forward->month}}-01</td>
+						<td>Balance Brought Forward</td>
+						<td style="text-align: right">{{ number_format($forward->balance,2) }}</td>
+						<td style="text-align: right"></td>
+						<td style="text-align: right">{{ number_format($forward->balance,2) }}</td>
+					</tr>
+				@endif
+
+				@foreach($cashbook as $key => $result)
 					<tr>
 						<td style="text-align: center">{{$result->invoice_date}}</td>
 						<td>
@@ -106,15 +118,30 @@
 						<td style="text-align: right">{{number_format($result->balance,2)}}</td>
 					</tr>
 				@endforeach
-				<tfoot>
-					<tr>
-						<td colspan="2">Total</td>
-						<td style="text-align: right">Rm {{number_format($debit,2)}}</td>
-						<td style="text-align: right">Rm {{number_format($credit,2)}}</td>
-					</tr>
-				</tfoot>
+<!-- 				<tr style="border-top: 2px black solid">
+					<td colspan="2">Total</td>
+					<td style="text-align: right">Rm {{number_format($debit,2)}}</td>
+					<td style="text-align: right">Rm {{number_format($credit,2)}}</td>
+					<td></td>
+				</tr> -->
 			</table>
+			<br/>
+			@for($a=0;$a< (30 - $forward->count) -(count($cashbook) * 1.5);$a++)
+				<br/>
+			@endfor 
 
+
+			<!-- Previous function -->
+<!-- 			 				@if(count($cashbook) > 24)
+					@for($a=0;$a<72 -(count($cashbook) * 1.5);$a++)
+						<br/>
+					@endfor
+				@else
+					@for($a=0;$a<75-(count($cashbook) * 1.5);$a++)
+						<br/>
+					@endfor
+				@endif -->
+			
 			<table class="bottom">
 				<tr>
 					<td>January<br/>{{ number_format($month[1],2) }}</td>
