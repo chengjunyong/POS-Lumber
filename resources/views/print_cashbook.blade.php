@@ -126,7 +126,7 @@
 				</tr> -->
 			</table>
 			<br/>
-			@for($a=0;$a< (30 - $forward->count) -(count($cashbook) * 1.5);$a++)
+			@for($a=0;$a< (30 - $forward->count) -(count($cashbook) * 2);$a++)
 				<br/>
 			@endfor 
 

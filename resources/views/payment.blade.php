@@ -75,6 +75,14 @@
 
 	  if(amount == "NaN"){
 	  	target.setCustomValidity('Please Fill An Amounts');
+	  	if(issue_date == ""){
+	  		target.setCustomValidity('Please Insert A Date');
+	  	}else{
+	  		target.setCustomValidity("");
+	  		if(confirm(text)){
+	  			$("form").submit();
+				}
+	  	}
 	  }else{
 	  	target.setCustomValidity("");
 	  	if(confirm(text)){
