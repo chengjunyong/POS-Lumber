@@ -76,3 +76,11 @@ Route::post('/postcompanybasedreport','MainController@postCompanyBasedReport')->
 Route::get('/creditnote','MainController@getCreditNote')->name('getCreditNote');
 
 Route::post('/postcreditnote','MainController@postCreditNote')->name('postCreditNote');
+
+Route::get('/PaymentHistory','MainController@getPaymentHistory')->name('getPaymentHistory');
+
+Route::get('/PaymentHistoryDetail','MainController@getPaymentHistoryDetail')->name('getPaymentHistoryDetail');
+
+Route::get('/AjaxModifyAmount','MainController@AjaxModifyAmount')->name('AjaxModifyAmount');
+
+

@@ -21,37 +21,30 @@
 	}
 
 	table{
-		border: 2px solid black;
+		border: 1px solid black;
 		width:100%;
 		border-collapse: collapse;
+		font-size:12px;
 	}
 
 	thead{
-		font-weight: bold;
 		text-align: center;
-		border:2px solid black;
+		border:1px solid black;
 	}
 
 	tfoot{
 		text-align: center;
-		border:2px solid black;
+		border:1px solid black;
 	}
 
 	th,td{
-		border-right:2px solid black;
+		border-right:1px solid black;
 		margin-left:5px;
-	}
-
-	td{
-		padding-top: 5px;
-		padding-bottom: 5px;
-		padding-left: 5px;
-		padding-right:5px;
 	}
 
 	.bottom{
 		text-align: center;
-		border: 2px solid black;
+		border: 1px solid black;
 		margin-top: 20px;
 		position: relative;
 		bottom:3px;
@@ -61,32 +54,38 @@
 
 	.bottom td{
 		width:16.5%;
-		border: 2px solid black;
+		border: 1px solid black;
 		border-collapse: collapse;
 		text-align: right;
 	}
 
-	h5{
-		margin:0;
-		color:black;
-		font-size:15px;
+	.header{
+		text-align: center;
+		font-size:12px;
+		margin-bottom: 5px;
+	}
+
+	th{
+		font-weight: 100;
 	}
 
 </style>
 <body>
 	<div class="frame">
 		<div class="inner">
-			<h5 align="center">VEGAVEST TRADING</h5>
-			<h5 align="center">(CA 0088843-X)</h5>
-			<h5 align="center">12 LORONG SERI KUANTAN 52</h5>
-			<h5 align="center">JALAN GALING 25250 KUANTAN</h5>
-			<h5 align="center">TEL: 012-9213373 FAX: 09-5366307</h5>
-			<h5 align="center">EMAIL: tfhow@hotmail.com</h5>
-			<h5 style="margin-top: 25px;color: black;">STATEMENT OF ACCOUNTS - {{$company->company_name}}</h5>
+			<div class="header">
+				<label>VEGAVEST TRADING</label><br/>
+				<label>(CA 0088843-X)</label><br/>
+				<label>12 LORONG SERI KUANTAN 52</label><br/>
+				<label>JALAN GALING 25250 KUANTAN</label><br/>
+				<label>TEL: 012-9213373 FAX: 09-5366307</label><br/>
+				<label>EMAIL: tfhow@hotmail.com</label><br/>
+				<label style="margin-top: 10px;color: black;">STATEMENT OF ACCOUNTS - {{$company->company_name}}</label><br/>
+			</div>
 
 			<table>
 				<thead>
-					<th>Date</th>
+					<th style="width:10%">Date</th>
 					<th>Particular</th>
 					<th style="width:15%">Debit</th>
 					<th style="width:15%">Credit</th>
@@ -113,9 +112,9 @@
 								Payment
 							@endif
 						</td>
-						<td style="text-align: right">{{ ($result->type == "debit") ? number_format($result->amount,2) : '' }}</td>
-						<td style="text-align: right">{{ ($result->type == "credit") ? number_format($result->amount,2) : '' }}</td>
-						<td style="text-align: right">{{number_format($result->balance,2)}}</td>
+						<td style="text-align: right;padding-right: 4px;">{{ ($result->type == "debit") ? number_format($result->amount,2) : '' }}</td>
+						<td style="text-align: right;padding-right: 4px;">{{ ($result->type == "credit") ? number_format($result->amount,2) : '' }}</td>
+						<td style="text-align: right;padding-right: 4px;">{{number_format($result->balance,2)}}</td>
 					</tr>
 				@endforeach
 <!-- 				<tr style="border-top: 2px black solid">
@@ -126,10 +125,15 @@
 				</tr> -->
 			</table>
 			<br/>
-			@for($a=0;$a< (30 - $forward->count) -(count($cashbook) * 2);$a++)
-				<br/>
-			@endfor 
-
+			@if(count($cashbook) == null || count($cashbook) < 10)
+				 @for($a=0;$a< (30 - $forward->count) -(count($cashbook) * 2);$a++)
+						<br/>
+				@endfor
+			@else
+				@for($a=0;$a< (40 - $forward->count) -(count($cashbook) * 2);$a++)
+						<br/>
+				@endfor
+			@endif
 
 			<!-- Previous function -->
 <!-- 			 				@if(count($cashbook) > 24)
@@ -168,6 +172,6 @@
 	</div>
 </body>
 <script>
-	window.print();
+	// window.print();
 </script>
 </html>

@@ -12,6 +12,7 @@ use App\invoice_detail;
 use App\cashbook;
 use App\credit;
 use App\credit_detail;
+use Illuminate\Support\Facades\DB;
 
 
 class MainController extends Controller
@@ -960,7 +961,6 @@ class MainController extends Controller
         $current_total += $month[$i];
       }
 
-
       return view("print_cashbook",compact('cashbook','company','debit','credit','month','current_total','forward'));
     }
 
@@ -1263,6 +1263,42 @@ class MainController extends Controller
 
       return back()->with('success',"success"); 
     }
+
+  public function getPaymentHistory()
+  {
+    $current = "payment_history";
+
+    $company = Company::get();
+
+    return view('payment_history',compact('current','company'));
+  }
+
+  public function getPaymentHistoryDetail(Request $request)
+  {
+    $current = "payment_history";
+
+    $month = substr($request->payment_date,5);
+
+    $history = Cashbook::whereRaw("MONTH(invoice_date) = ".$month." AND company_id = ".$request->company_id)
+                        ->orderBy('invoice_date','desc')
+                        ->get();
+
+    return view('payment_history_detail',compact('current','history'));
+    
+  }
+
+  public function AjaxModifyAmount(Request $request)
+  {
+    try{
+      Cashbook::where('id',$request->id)->update(['amount' => $request->amount]);
+
+      return "true";
+
+    }catch(Throwable $e){
+
+      return "false";
+    }
+  }
 
 }
 

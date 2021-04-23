@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="assets/css/app.css">
   <link rel="stylesheet" href="assets/css/datatables.min.css">
   <link rel="shortcut icon" href="assets/images/icon.png" type="image/x-icon">
+  <link rel="stylesheet" href="assets/css/sweetalert2.min.css">
 </head>
 <body>
   <div id="app">
@@ -105,6 +106,13 @@
               <a href="{{ route('getPayment') }}" class='sidebar-link'>
                 <i data-feather="dollar-sign" width="20"></i> 
                 <span>Payment</span>
+              </a>
+            </li>  
+
+            <li class="sidebar-item {{ $current == 'payment_history' ? 'active' : '' }}" >
+              <a href="{{ route('getPaymentHistory') }}" class='sidebar-link'>
+                <i data-feather="book-open" width="20"></i> 
+                <span>Payment History</span>
               </a>
             </li>     
 
