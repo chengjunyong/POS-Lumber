@@ -16,7 +16,6 @@
 
 	.header{
 		text-align: center;
-		font-weight: 700;
 	}
 
 	.sub_header{
@@ -30,6 +29,7 @@
 
 	th{
 		font-size:12px;
+    font-weight: 100;
 	}
 
 	table > tbody {
@@ -78,7 +78,7 @@
 	</div>
 
 	<div class="sub_header">
-		<h3 align="center" style="color:black;margin-top: -20px !important">INVOICE</h3>
+		<h3 align="center" style="color:black;margin-top: -20px !important;font-weight: 100;">INVOICE</h3>
 			<div style="float:left">
 				<span>{{ $company->company_name }}</span><br/>
 				<span>{{ $company->address }}</span><br/>
@@ -218,17 +218,17 @@
 			<table style="width:100%;border-top: 2px solid;border-bottom:2px solid">
 				<tr>
 					<td style="width:1%"></td>
-					<td style="text-align: left;width:50%"><b>Total :</b></td>
-					<td style="text-align: center;width:10%"><b>{{ $sum['piece'] }}</b></td>
-					<td style="width:8%"><b>{{ $sum['tonnage'] }}</b></td>
+					<td style="text-align: left;width:50%">Total :</td>
+					<td style="text-align: center;width:10%">{{ $sum['piece'] }}</td>
+					<td style="width:8%">{{ $sum['tonnage'] }}</td>
 					<td style="width:7%"></td>
-					<td style="width:5%;text-align: right"><b>{{ number_format($sum['amount'],2) }}</b></td>
+					<td style="width:5%;text-align: right">{{ number_format($sum['amount'],2) }}</td>
 				</tr>
 			</table>
 			<table align="center" style="width:100%;text-align: left;margin-top: 75px">
 				<tr>
-					<td><b>ISSUE BY:</b> _____________________________________ </td>
-					<td><b>RECEIVED BY:</b> _____________________________________ </td>
+					<td>ISSUE BY: _____________________________________ </td>
+					<td>RECEIVED BY: _____________________________________ </td>
 				</tr>
 			</table>
 		</div>
