@@ -33,7 +33,5 @@
 </div>
 
 @include('script')
-<script>
-</script>
 
 @include('footer')

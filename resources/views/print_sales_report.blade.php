@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Monthly Report</title>
+  <title>Sales Report</title>
 </head>
 <style type="text/css">
   .header{
@@ -32,7 +32,7 @@
     <div class="header">
       <label>VEGAVEST TRADING</label><br/>
       <label>(CA 0088843-X)</label><br/>
-      <label>Monthly Report</label><br/>
+      <label>Sales Report</label><br/>
       <label>Generate Date : {{date("Y-m-d")}}</label><br/>
     </div>
   </div>
@@ -45,9 +45,7 @@
         <td style="width:10%">Invoice Number</td>
         <td>Company Name</td>
         <td style="width:8%;text-align: center;">Total Tonnage (TON)</td>
-        <td style="width:10%;text-align: center;">Total Cost (Rm)</td>
         <td style="width:10%;text-align: center;">Total Sales (Rm)</td>
-        <td style="width:10%;text-align: center;">Total Profit (Rm)</td>
       </tr>
       @foreach($invoice as $result)
         <tr>
@@ -55,18 +53,14 @@
           <td style="text-align: center">{{$result->invoice_code}}</td>
           <td style="text-align: left">{{$result->company_name}}</td>
           <td style="text-align: right;padding-right: 5px;">{{$result->tonnage}}</td>
-          <td style="text-align: right;padding-right: 5px;">{{number_format($result->total_cost,2)}}</td>
           <td style="text-align: right;padding-right: 5px;">{{number_format($result->amount,2)}}</td>
-          <td style="text-align: right;padding-right: 5px;">{{number_format($result->amount - $result->total_cost,2)}}</td>
         </tr>
       @endforeach
       <tfoot>
         <tr>
           <td colspan="3" style="text-align: center">Summary</td>
           <td style="text-align: right;padding-right: 5px;">{{$total->tonnage}}</td>
-          <td style="text-align: right;padding-right: 5px;">{{number_format($total->cost,2)}}</td>
           <td style="text-align: right;padding-right: 5px;">{{number_format($total->amount,2)}}</td>
-          <td style="text-align: right;padding-right: 5px;">{{number_format($total->profit,2)}}</td>
         </tr>
       </tfoot>
     </table>

@@ -83,4 +83,11 @@ Route::get('/PaymentHistoryDetail','MainController@getPaymentHistoryDetail')->na
 
 Route::get('/AjaxModifyAmount','MainController@AjaxModifyAmount')->name('AjaxModifyAmount');
 
+Route::get('/SalesReport','MainController@getSalesReport')->name('getSalesReport');
+
+Route::post('/SalesReport','MainController@postSalesReport')->name('postSalesReport');
+
+//Genearte PDF
+Route::get('/Test','MainController@test')->name('test');
+
 

@@ -3,89 +3,75 @@
 	<title>Specify Date Report</title>
 </head>
 <style type="text/css">
-	body{
-		background-color: black;
-		color:black;
-	}
+.header{
+  text-align: center;
+  display: block;
+}
 
-	.frame{
-		background-color: white;
-		margin:0 auto;
-		width:95%;
-		padding-bottom: 10px
-	}
+table,tr,td{
+  border:1px solid black;
+  border-collapse: collapse;
+}
 
-	.inner{
-		margin:0px 10px 0px 10px;
-	}
+footer{
+  text-align: center;
+  position: fixed;
+  bottom: 10;
+  left:0
+}
 
-	table{
-		border: 2px solid black;
-		width:100%;
-		border-collapse: collapse;
-	}
-
-	thead,tfoot{
-		font-weight: bold;
-		text-align: center;
-		border:2px solid black;
-	}
-
-	th,td{
-		border-right:2px solid black;
-		margin-left:5px;
-	}
-
-	td{
-		padding-top: 5px;
-		padding-bottom: 5px;
-		padding-left: 5px;
-		padding-right:5px;
-	}
-
-
+td{
+  font-size:13px;
+  padding: 2px;
+}
 </style>
 <body>
-	<div class="frame">
-		<div class="inner">
-			<h3 align="center">VEGAVEST TRADING</h3>
-			<h3 align="center">(CA 0088843-X)</h3>
-			<h3 align="center">Monthly Report</h3>
-			<h3 align="center">Generate Date : {{date("Y-m-d")}}</h3>
-			<table>
-				<thead>
-					<th>Invoice Date</th>
-					<th>Invoice Number</th>
-					<th>Company Name</th>
-					<th>Total Tonnage</th>
-					<th>Total Cost</th>
-					<th>Total Amount</th>
-					<th>Total Profit</th>
-				</thead>
-				@foreach($invoice as $result)
-					<tr>
-						<td style="text-align: center">{{$result->invoice_date}}</td>
-						<td style="text-align: center">{{$result->invoice_code}}</td>
-						<td style="text-align: center">{{$result->company_name}}</td>
-						<td style="text-align: right;padding-right: 5px;">{{$result->tonnage}} <b>TON</b></td>
-						<td style="text-align: right;padding-right: 5px;">Rm {{number_format($result->total_cost,2)}}</td>
-						<td style="text-align: right;padding-right: 5px;">Rm {{number_format($result->amount,2)}}</td>
-						<td style="text-align: right;padding-right: 5px;">Rm {{number_format($result->amount - $result->total_cost,2)}}</td>
-					</tr>
-				@endforeach
-				<tfoot>
-					<tr>
-						<td colspan="3">Summary</td>
-						<td style="text-align: right;padding-right: 5px;">{{$total->tonnage}} <b>TON</b></td>
-						<td style="text-align: right;padding-right: 5px;">Rm {{number_format($total->cost,2)}}</td>
-						<td style="text-align: right;padding-right: 5px;">Rm {{number_format($total->amount,2)}}</td>
-						<td style="text-align: right;padding-right: 5px;">Rm {{number_format($total->profit,2)}}</td>
-					</tr>
-				</tfoot>
+<div class="row">
+  <div class="col-12">
+    <div class="header">
+			<label align="center">VEGAVEST TRADING</label><br/>
+			<label align="center">(CA 0088843-X)</label><br/>
+			<label align="center">Monthly Report</label><Br/>
+			<label align="center">Generate Date : {{date("Y-m-d")}}</label>
+    </div>
+  </div>
+</div>
 
-			</table>
+<div class="row">
+  <div class="col-12">
+		<table style="width:100%;margin-top: 10px;">
+			<tr>
+				<td style="text-align: center">Invoice Date</td>
+				<td style="text-align: center">Invoice Number</td>
+				<td style="text-align: center">Company Name</td>
+				<td style="text-align: center">Total Tonnage (TON)</td>
+				<td style="text-align: center">Total Cost</td>
+				<td style="text-align: center">Total Sales</td>
+				<td style="text-align: center">Total Profit</td>
+			</tr>
+			@foreach($invoice as $result)
+				<tr>
+					<td style="text-align: center;width:10%">{{$result->invoice_date}}</td>
+					<td style="text-align: center;width:10%">{{$result->invoice_code}}</td>
+					<td style="text-align: left">{{$result->company_name}}</td>
+					<td style="text-align: right;padding-right: 5px;width:10%">{{$result->tonnage}} </td>
+					<td style="text-align: right;padding-right: 5px;width:10%">{{number_format($result->total_cost,2)}}</td>
+					<td style="text-align: right;padding-right: 5px;width:10%">{{number_format($result->amount,2)}}</td>
+					<td style="text-align: right;padding-right: 5px;width:10%">{{number_format($result->amount - $result->total_cost,2)}}</td>
+				</tr>
+			@endforeach
+			<tfoot>
+				<tr>
+					<td colspan="3" style="text-align: center;">Summary</td>
+					<td style="text-align: right;padding-right: 5px;">{{$total->tonnage}} </td>
+					<td style="text-align: right;padding-right: 5px;">{{number_format($total->cost,2)}}</td>
+					<td style="text-align: right;padding-right: 5px;">{{number_format($total->amount,2)}}</td>
+					<td style="text-align: right;padding-right: 5px;">{{number_format($total->profit,2)}}</td>
+				</tr>
+			</tfoot>
+		</table>
+  </div>
+</div>
 
-		<div>
-	</div>
 </body>
 </html>

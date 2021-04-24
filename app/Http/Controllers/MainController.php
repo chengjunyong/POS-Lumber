@@ -13,6 +13,7 @@ use App\cashbook;
 use App\credit;
 use App\credit_detail;
 use Illuminate\Support\Facades\DB;
+use PDF;
 
 
 class MainController extends Controller
@@ -961,7 +962,11 @@ class MainController extends Controller
         $current_total += $month[$i];
       }
 
-      return view("print_cashbook",compact('cashbook','company','debit','credit','month','current_total','forward'));
+      $format = "Debtor Report (".date('d-M-Y').").pdf";
+
+      $pdf = PDF::loadView("print_cashbook",compact('cashbook','company','debit','credit','month','current_total','forward'));
+
+      return $pdf->download($format);
     }
 
     public function getPayment()
@@ -1022,7 +1027,11 @@ class MainController extends Controller
       $total->cost = $total_cost;
       $total->profit = $total_profit;
 
-      return view('print_monthly_report',compact('invoice','total'));
+      $format = "Monthly Report (".date('d-M-Y').").pdf";
+
+      $pdf = PDF::loadView('print_monthly_report',compact('invoice','total'));
+
+      return $pdf->download($format);
     }
 
     public function getSpecifyDateReport(){
@@ -1055,8 +1064,11 @@ class MainController extends Controller
       $total->cost = $total_cost;
       $total->profit = $total_profit;
 
+      $format = "Specify Date Report (".date('d-M-Y').").pdf";
 
-      return view('print_specify_date_report',compact('total','invoice'));
+      $pdf = PDF::loadView('print_specify_date_report',compact('total','invoice'));
+
+      return $pdf->download($format);
     }
 
     public function getCompanyBasedReport(){
@@ -1092,7 +1104,11 @@ class MainController extends Controller
       $total->cost = $total_cost;
       $total->profit = $total_profit;
 
-      return view('print_company_based_report',compact('total','invoice'));
+      $format = "Company Based Report (".date('d-M-Y').").pdf";
+
+      $pdf = PDF::loadView('print_company_based_report',compact('total','invoice'));
+
+      return $pdf->download($format);
     }
 
 
@@ -1300,6 +1316,72 @@ class MainController extends Controller
     }
   }
 
+  public function getSalesReport()
+  {
+    $current = "report";
+
+    return view('sales_report',compact('current'));
+  }
+
+  public function postSalesReport(Request $request)
+  {
+    $total = new \stdClass;
+    $invoice = invoice::join('company','company.id','=','invoice.company_id')
+                        ->whereRaw('MONTH(invoice.invoice_date) = "'.$request->month.'"')
+                        ->orderBy('invoice.invoice_date')
+                        ->get();
+
+    $total_tonnage = 0;
+    $total_amount = 0;
+    $total_cost = 0;
+    $total_profit = 0;
+    foreach($invoice as $result){
+      $total_tonnage += $result->tonnage;
+      $total_amount += $result->amount;
+      $total_cost += $result->total_cost;
+      $total_profit += $result->amount - $result->total_cost;
+    }
+
+    $total->tonnage = $total_tonnage;
+    $total->amount = $total_amount;
+    $total->cost = $total_cost;
+    $total->profit = $total_profit;
+
+    $format = "Sales Report (".date("d-M-Y").").pdf";
+
+    $pdf = PDF::loadView('print_sales_report',compact('total','invoice'));
+
+    return $pdf->download($format);
+  }
+
+  public function test(Request $request)
+  {
+    $total = new \stdClass;
+    $invoice = invoice::join('company','company.id','=','invoice.company_id')
+                        ->whereRaw('MONTH(invoice.invoice_date) = "'.$request->month.'"')
+                        ->orderBy('invoice.invoice_date')
+                        ->get();
+
+    $total_tonnage = 0;
+    $total_amount = 0;
+    $total_cost = 0;
+    $total_profit = 0;
+    foreach($invoice as $result){
+      $total_tonnage += $result->tonnage;
+      $total_amount += $result->amount;
+      $total_cost += $result->total_cost;
+      $total_profit += $result->amount - $result->total_cost;
+    }
+
+    $total->tonnage = $total_tonnage;
+    $total->amount = $total_amount;
+    $total->cost = $total_cost;
+    $total->profit = $total_profit;
+
+    $pdf = PDF::loadView('test_pdf',compact('total','invoice'));
+
+    return $pdf->download('test.pdf');
+  }
 }
 
 
