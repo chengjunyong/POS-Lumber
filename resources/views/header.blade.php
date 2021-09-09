@@ -94,7 +94,7 @@
                     <a href="{{ route('getMonthlyReport') }}">Monthly Report</a>
                 </li>
                 <li>
-                    <a href="{{ route('getSalesReport') }}">Sales Report *<b>(BETA)</b></a>
+                    <a href="{{ route('getSalesReport') }}">Sales Report</a>
                 </li>
                 <li>
                     <a href="{{ route('getSpecifyDateReport') }}">Specify Date Report</a>

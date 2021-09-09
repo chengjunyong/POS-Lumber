@@ -87,6 +87,8 @@ Route::get('/SalesReport','MainController@getSalesReport')->name('getSalesReport
 
 Route::post('/SalesReport','MainController@postSalesReport')->name('postSalesReport');
 
+Route::get('/DeleteInvoice','MainController@ajaxDeleteInvoice')->name('ajaxDeleteInvoice');
+
 //Genearte PDF
 Route::get('/Test','MainController@test')->name('test');
 

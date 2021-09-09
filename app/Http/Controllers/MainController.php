@@ -1382,6 +1382,14 @@ class MainController extends Controller
 
     return $pdf->download('test.pdf');
   }
+
+  public function ajaxDeleteInvoice(Request $request)
+  {
+    Invoice::where('id',$request->id)->delete();
+    invoice_detail::where('invoice_id',$request->id)->delete();
+
+    return json_encode(true);
+  }
 }
 
 
