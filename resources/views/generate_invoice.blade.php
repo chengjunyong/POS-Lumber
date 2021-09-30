@@ -56,8 +56,11 @@
 				</div>
 				<form action="{{route('postInvoice')}}" method="post">
 					<div class="row">
-						<h5 style="margin-left: 30px">Invoice Number - ({{ $invoice_number }})</h5>
-						<input type="text" hidden name="invoice_number" value="{{ $invoice_number }}" />
+						<h5 style="margin-left: 30px">
+              Invoice Number - 
+              <input readonly type="text" name="invoice_number" value="{{ $invoice_number }}" style="width:10vw;padding:5px;border: 1px solid #DFE3E7;" />
+              <label style="font-size: 15px;color: #15c315;">Edit Invoice Number</label><input type="checkbox" id="edit" style="margin:0px 5px;height:20px;width:20px;"/>
+            </h5>
 						<div style="margin-left: 30px" class="col-3">
 							<h5>To Company</h5>
 							<select name="company_id" class="form-control">
@@ -441,6 +444,14 @@
 		 	$(this).parents().eq(0).siblings().eq(7).children().val("Rm "+display3);
 		}
 	});
+
+  $("#edit").click(function(){
+    if($(this).prop('checked') == true){
+      $("input[name=invoice_number]").prop('readonly',false);
+    }else{
+      $("input[name=invoice_number]").prop('readonly',true);
+    }
+  });
 
 
 	function cal1(target){
