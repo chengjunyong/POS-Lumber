@@ -875,6 +875,7 @@ class MainController extends Controller
       //Main Part
       $debit = 0;
       $credit = 0;
+      $year = date("Y");
       $company = company::where('id',$request->id)->first();
       $forward = new \stdClass();
 
@@ -891,11 +892,11 @@ class MainController extends Controller
 
       }else{
         $month = intval($request->issue_month) - 1;
-        $cashbook = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = ".$request->issue_month)
+        $cashbook = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = ".$request->issue_month." AND YEAR(invoice_date) = ".$year)
                           ->orderBy('invoice_date')
                           ->get();
 
-        $forward = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) <= ".$month)
+        $forward = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) <= ".$month." AND YEAR(invoice_date) = ".$year)
                           ->orderBy('invoice_date')
                           ->get();
 
@@ -1006,8 +1007,10 @@ class MainController extends Controller
 
     public function postMonthlyReport(Request $request){
       $total = new \stdClass;
+      $year = date("Y");
       $invoice = invoice::join('company','company.id','=','invoice.company_id')
                           ->whereRaw('MONTH(invoice.invoice_date) = "'.$request->month.'"')
+                          ->whereRaw('YEAR(invoice.invoice_date) = "'.$year.'"')
                           ->orderBy('invoice.invoice_date')
                           ->get();
 
@@ -1328,6 +1331,7 @@ class MainController extends Controller
     $total = new \stdClass;
     $invoice = invoice::join('company','company.id','=','invoice.company_id')
                         ->whereRaw('MONTH(invoice.invoice_date) = "'.$request->month.'"')
+                        ->whereRaw('YEAR(invoice.invoice_date) = "'.date("Y").'"')
                         ->orderBy('invoice.invoice_date')
                         ->get();
 
