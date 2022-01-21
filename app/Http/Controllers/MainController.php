@@ -891,12 +891,13 @@ class MainController extends Controller
         $forward->date = null;
 
       }else{
+        $full_date = date("Y")."-".$request->issue_month.'-01';
         $month = intval($request->issue_month) - 1;
         $cashbook = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = ".$request->issue_month." AND YEAR(invoice_date) = ".$year)
                           ->orderBy('invoice_date')
                           ->get();
 
-        $forward = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) <= ".$month." AND YEAR(invoice_date) = ".$year)
+        $forward = cashbook::whereRaw("company_id = '".$request->id."' AND invoice_date < '".$full_date."'")
                           ->orderBy('invoice_date')
                           ->get();
 
@@ -930,44 +931,60 @@ class MainController extends Controller
       }
 
       //Part Footer
+      //Customer pay amount (Not total invoice amount)
+      $current_total = 0;
       $total_payment = cashbook::where('company_id',$request->id)
                                 ->where('type','credit')
                                 ->sum('amount');
-      $current_total = 0;
-      $month = array();
-      $each = array();
-      $a = 0;
-      $con = true;
-      for($i=1;$i<=12;$i++){
-        $each[$i] = invoice::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = '".$i."' AND YEAR(invoice_date) = '".date("Y")."'")->get();
-        foreach($each[$i] as $result){
-          $a += $result->amount;
-        }
-        if($a != 0){
-          if($con){
-            $total_payment = $total_payment - $a;
-            if($total_payment <= 0){
-              $month[$i] = abs($total_payment);
-              $con = false;
-            }else{
-              $month[$i] = 0;
-            }
-          }else{
-            $month[$i] = $a;
-          }
-        }else{
-          $month[$i] = null;        
-        }
-        $a = 0;
 
-        $current_total += $month[$i];
+      $pre_month = array();
+      for($x=1;$x<=12;$x++){
+        $pre_month[$x] = invoice::where('company_id',$request->id)
+                        ->whereRaw("MONTH(invoice_date) = '".$x."' AND YEAR(invoice_date) = '".date("Y",strtotime('-1 year'))."'")
+                        ->sum("amount");
       }
+      foreach($pre_month as $index => $result){
+        $total_payment = $total_payment - $result;
+        if($total_payment <= 0){
+          $pre_month[$index] = abs($total_payment);
+          break;
+        }else{
+          $pre_month[$index] = 0;
+        }
+      }
+
+      // dd($pre_month,$total_payment);
+      $current_total = array_sum($pre_month);
+
+      $month = array();
+
+      for($i=1;$i<=12;$i++){
+        $month[$i] = invoice::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = '".$i."' AND YEAR(invoice_date) = '".date("Y")."'")->sum('amount');
+      }
+
+      foreach($month as $index => $result){
+        if($total_payment <= 0){
+          break;
+        }else{
+          $total_payment = $total_payment - $result;
+          if($total_payment <= 0){
+            $month[$index] = abs($total_payment);
+            break;
+          }else{
+            $month[$index] = 0;
+          }
+        }
+      }
+
+      $current_total += array_sum($month);
 
       $format = "Debtor Report (".date('d-M-Y').").pdf";
 
-      $pdf = PDF::loadView("print_cashbook",compact('cashbook','company','debit','credit','month','current_total','forward'));
+      $pdf = PDF::loadView("print_cashbook",compact('cashbook','company','debit','credit','month','current_total','forward','pre_month'));
 
       return $pdf->download($format);
+
+      return view('print_cashbook',compact('cashbook','company','debit','credit','month','current_total','forward','pre_month'));
     }
 
     public function getPayment()

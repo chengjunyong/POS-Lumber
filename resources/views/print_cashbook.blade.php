@@ -16,7 +16,7 @@
   footer{
     text-align: center;
     position:fixed;
-    bottom: 60;
+    bottom: 100;
     left:0
   }
 
@@ -83,6 +83,20 @@
   <div class="col-12">
     <footer>		
       <table style="width:100%;text-align: center">
+        <tr>
+          <td colspan="6"><b>Previous Year</b></td>
+        </tr>
+        <tr>
+          <td>July<br/>{{ number_format($pre_month[7],2) }}</td>
+          <td>August<br/>{{ number_format($pre_month[8],2) }}</td>
+          <td>September<br/>{{ number_format($pre_month[9],2) }}</td>
+          <td>October<br/>{{ number_format($pre_month[10],2) }}</td>
+          <td>November<br/>{{ number_format($pre_month[11],2) }}</td>
+          <td>December<br/>{{ number_format($pre_month[12],2) }}</td>
+        </tr>
+        <tr>
+          <td colspan="6"><b>Current Year</b></td>
+        </tr>
       	<tr>
       		<td>January<br/>{{ number_format($month[1],2) }}</td>
       		<td>February<br/>{{ number_format($month[2],2) }}</td>
