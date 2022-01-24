@@ -953,7 +953,6 @@ class MainController extends Controller
         }
       }
 
-      // dd($pre_month,$total_payment);
       $current_total = array_sum($pre_month);
 
       $month = array();
