@@ -137,7 +137,7 @@
 									</tr>
 								</tbody>
 							</table>
-							<button id="generate" class="btn btn-primary" style="float:right">Generate</button>
+							<button type="button" id="generate" class="btn btn-primary" style="float:right" >Generate</button>
 							<button type="button" id="add_p" class="btn btn-primary" style="border-radius: 100%;padding:3px 8px 7px; "><i data-feather="plus"></i></button></th>
 						</div>
 					</div>
@@ -664,11 +664,15 @@
   	}
   });
 
-  // $("#generate").on("click",function(event){
-  // 	event.preventDefault();
-  // 	var b = $("form").serializeArray();
-  // 	$("form").submit();
-  // });
+  $("#generate").on("click",function(event){
+    let form = document.querySelector('form')
+    if(form.reportValidity()){
+      $("#generate").prop('disabled',true);
+      $("form").submit();
+    }else{
+      $("#generate").prop('disabled',false);
+    }
+  });
 
 </script>
 
