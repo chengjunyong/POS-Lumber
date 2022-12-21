@@ -31,7 +31,7 @@
 	        	<td>{{ $result['updated_at'] }}</td>
 	        	<td>
 	        		<a href="{{ route('editProfile',$result['id']) }}"><button class="btn btn-primary">Edit</button></a>
-	        		<button class="btn btn-secondary delete" target="{{ $result['id'] }}">Delete</button>
+	        		<button class="btn btn-secondary delete" onclick="deleteCompany({{$result->id}})">Delete</button>
 	        	</td>
 	        </tr>
 	        @endforeach
@@ -44,25 +44,30 @@
 <script>
 	$("#profile").DataTable();
 
-	$(".delete").click(function(){
+  function deleteCompany(company_id){
 
-		if(confirm('Confirm to delete this company profile ?')){
-			let token = $("input[name=_token]").val();
-			let id = $(this).attr('target');
+    if(confirm('Confirm to delete this company profile ?')){
+      let token = $("input[name=_token]").val();
+      let id = company_id;
 
-			$.post('{{ route('ajaxDeleteCompany') }}',
-				{
-					'_token' : token,
-					'id' : id
-				},
-				function(data){
-					console.log(data);
-				},'html');
-
-			window.location.reload();
-		}
-
-	});
+      $.post('{{ route('ajaxDeleteCompany') }}',
+        {
+          '_token' : token,
+          'id' : id
+        },
+        function(data){
+          if(data){
+            swal.fire({
+              title:'Delete Successful',
+              text: "Delete Successful, this page will refresh in a while",
+              icon: 'success',
+            }).then(()=>{
+              window.location.reload();
+            });
+          }
+        },'json');
+    }
+  }
 </script>
 @include('footer')
 

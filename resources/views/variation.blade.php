@@ -74,12 +74,13 @@
 				'variation' : variation
 
 			},function(data){
-
 				if(data != 0){
 					$(".list").prepend('<div style="margin:25px 0px 25px 0px"><label class="text">'+data['first']+'" x </label><label class="text">&nbsp;'+data['second']+'"</label><button class="btn btn-danger delete" variation_id="'+data['id']+'">Delete</button><hr/></div>');
 				}
-
-			},"json");
+			},"json")
+			.fail(function() {
+				alert( "Incorrect Format" );
+			});
 		}
 	});
 

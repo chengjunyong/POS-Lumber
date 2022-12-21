@@ -224,7 +224,7 @@ class MainController extends Controller
 
     public function ajaxDeleteCompany(Request $request)
     {
-      $result = company::where('id',$request->id)->update(['active' => 0]);
+      $result = company::where('id',$request->id)->delete();
 
       return $result;
     }
@@ -279,6 +279,9 @@ class MainController extends Controller
         if(strpos($result['first']," ") != null){
           $ans = explode(" ",$result['first']);
           $ans2 = explode("/",$ans[1]);
+          // if(!isset($ans2[1])){
+          //   dd($result,$ans2);
+          // }
           $num = $ans[0]." <sup>".$ans2[0]."</sup>&frasl;<sub>".$ans2[1]."</sub>";
           $variation[$key]['first'] = $num;
         }else if(strpos($result['first'],"/") != null){
@@ -1410,6 +1413,11 @@ class MainController extends Controller
     cashbook::where('invoice_id',$request->id)->delete();
 
     return json_encode(true);
+  }
+
+  public function getDebtorListing()
+  {
+    
   }
 }
 
