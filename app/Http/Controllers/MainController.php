@@ -934,11 +934,19 @@ class MainController extends Controller
       }
 
       //Part Footer
+
       //Customer pay amount (Not total invoice amount)
       $current_total = 0;
       $total_payment = cashbook::where('company_id',$request->id)
                                 ->where('type','credit')
                                 ->sum('amount');
+
+      $remainder = cashbook::where('company_id',$request->id)
+                          ->where('type','debit')
+                          ->where('invoice_date','<=',date("Y",strtotime('-2 year'))."-12-31")
+                          ->sum('amount');
+
+      $total_payment = $total_payment - $remainder;
 
       $pre_month = array();
       for($x=1;$x<=12;$x++){
@@ -966,17 +974,17 @@ class MainController extends Controller
 
       foreach($month as $index => $result){
         if($total_payment <= 0){
-          break;
+
         }else{
           $total_payment = $total_payment - $result;
           if($total_payment <= 0){
             $month[$index] = abs($total_payment);
-            break;
+
           }else{
             $month[$index] = 0;
           }
         }
-      }
+      } 
 
       $current_total += array_sum($month);
 

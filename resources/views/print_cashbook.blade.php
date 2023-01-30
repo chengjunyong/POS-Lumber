@@ -54,7 +54,7 @@
 
 	@if($forward->type != null && $forward->type == "forward" && $forward->balance != 0)
 		<tr>
-			<td style="text-align: center">2021-{{ (strlen($forward->month) == 1) ? '0'.$forward->month : $forward->month}}-01</td>
+			<td style="text-align: center">{{date("Y")}}-{{ (strlen($forward->month) == 1) ? '0'.$forward->month : $forward->month}}-01</td>
 			<td>Balance Brought Forward</td>
 			<td style="text-align: right">{{ number_format($forward->balance,2) }}</td>
 			<td style="text-align: right"></td>
