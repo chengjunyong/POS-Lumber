@@ -227,7 +227,7 @@
 			</table>
 			<table align="center" style="width:100%;text-align: left;margin-top: 75px">
 				<tr>
-					<td>ISSUE BY: _____________________________________ </td>
+					<td>ISSUE BY:  _____________________________________</td>
 					<td>RECEIVED BY: _____________________________________ </td>
 				</tr>
 			</table>
@@ -236,6 +236,8 @@
 
 
 	</div>
+
+	<img style="position: absolute; bottom:-15px;left:75px;" src="../assets/images/sign.png" width="150" height="100"/>
 </body>
 
 <script src="../assets/js/jquery.min.js"></script>
