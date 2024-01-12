@@ -1358,7 +1358,7 @@ class MainController extends Controller
     $total = new \stdClass;
     $invoice = invoice::join('company','company.id','=','invoice.company_id')
                         ->whereRaw('MONTH(invoice.invoice_date) = "'.$request->month.'"')
-                        ->whereRaw('YEAR(invoice.invoice_date) = "'.date("Y").'"')
+                        ->whereRaw('YEAR(invoice.invoice_date) = "'.$request->year.'"')
                         ->orderBy('invoice.invoice_date')
                         ->get();
 
