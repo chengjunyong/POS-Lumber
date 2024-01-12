@@ -20,6 +20,15 @@
 									<option value="{{$result->id}}">{{ $result->company_name }}</option>
 								@endforeach
 							</select>
+
+							<select class="form-control" name="year" style="width: 35%;margin: 0 auto;font-size: 15px;margin-bottom: 15px" required>
+                <option value="2025" {{ date("Y") == '2025' ? 'selected' : '' }}>2025</option>
+                <option value="2024" {{ date("Y") == '2024' ? 'selected' : '' }}>2024</option>
+                <option value="2023" {{ date("Y") == '2023' ? 'selected' : '' }}>2023</option>
+                <option value="2022" {{ date("Y") == '2022' ? 'selected' : '' }}>2022</option>
+                <option value="2021" {{ date("Y") == '2021' ? 'selected' : '' }}>2021</option>
+              </select>
+
 							<select class="form-control" name="issue_month" style="width: 35%;margin: 0 auto;font-size: 15px;margin-bottom: 15px" required>
 								<option value="all">All</option>
 								<option value="01">January</option>

@@ -878,7 +878,7 @@ class MainController extends Controller
       //Main Part
       $debit = 0;
       $credit = 0;
-      $year = date("Y");
+      $year = $request->year;
       $company = company::where('id',$request->id)->first();
       $forward = new \stdClass();
 
@@ -1034,7 +1034,7 @@ class MainController extends Controller
 
     public function postMonthlyReport(Request $request){
       $total = new \stdClass;
-      $year = date("Y");
+      $year = $request->year;
       $invoice = invoice::join('company','company.id','=','invoice.company_id')
                           ->whereRaw('MONTH(invoice.invoice_date) = "'.$request->month.'"')
                           ->whereRaw('YEAR(invoice.invoice_date) = "'.$year.'"')
