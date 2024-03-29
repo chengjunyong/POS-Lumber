@@ -237,7 +237,7 @@
 
 	</div>
 
-	<img style="position: absolute; bottom:-15px;left:75px;" src="../assets/images/sign.png" width="150" height="100"/>
+	<img style="position: absolute; height:100px;left:75px;" src="../assets/images/sign.png" width="150" height="100"/>
 </body>
 
 <script src="../assets/js/jquery.min.js"></script>
