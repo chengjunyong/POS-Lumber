@@ -16,11 +16,9 @@
             <form method="post" action="{{ route('postSalesReport') }}" target="_blank" >
               @csrf
               <select name="year" class="form-control" style="width:25%;margin: 0 auto;margin-top: 10px;margin-bottom: 10px">
-                <option value="2025" {{ date("Y") == '2025' ? 'selected' : '' }}>2025</option>
-                <option value="2024" {{ date("Y") == '2024' ? 'selected' : '' }}>2024</option>
-                <option value="2023" {{ date("Y") == '2023' ? 'selected' : '' }}>2023</option>
-                <option value="2022" {{ date("Y") == '2022' ? 'selected' : '' }}>2022</option>
-                <option value="2021" {{ date("Y") == '2021' ? 'selected' : '' }}>2021</option>
+                @for ($year = date("Y"); $year >= 2021; $year--)
+                  <option value="{{ $year }}" {{ date("Y") == $year ? 'selected' : '' }}>{{ $year }}</option>
+                @endfor
               </select>
 
               <select name="month" class="form-control" style="width:25%;margin: 0 auto;margin-top: 10px;margin-bottom: 10px">
