@@ -894,7 +894,7 @@ class MainController extends Controller
         $forward->date = null;
 
       }else{
-        $full_date = date("Y")."-".$request->issue_month.'-01';
+        $full_date = $request->year."-".$request->issue_month.'-01';
         $month = intval($request->issue_month) - 1;
         $cashbook = cashbook::whereRaw("company_id = '".$request->id."' AND MONTH(invoice_date) = ".$request->issue_month." AND YEAR(invoice_date) = ".$year)
                           ->orderBy('invoice_date')
@@ -917,6 +917,7 @@ class MainController extends Controller
         $forward->balance = $balance_forward;
         $forward->count = 2;
         $forward->month = $request->issue_month;
+        $forward->year = $request->year;
 
       }
 
